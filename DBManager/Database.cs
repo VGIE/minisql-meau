@@ -19,17 +19,17 @@ namespace DbManager
         public Manager SecurityManager { get; private set; }
 
         //This constructor should only be used from Load (without needing to set a password for the user). It cannot be used from any other class
-        private Database()
+        private Database() // ?
         {
         }
 
-        public Database(string adminUsername, string adminPassword)
+        public Database(string adminUsername, string adminPassword) // Aitana
         {
             //DEADLINE 1.B: Initalize the member variables
             
         }
 
-        public bool AddTable(Table table)
+        public bool AddTable(Table table) // Aitana
         {
             //DEADLINE 1.B: Add a new table to the database
             
@@ -37,7 +37,7 @@ namespace DbManager
             
         }
 
-        public Table TableByName(string tableName)
+        public Table TableByName(string tableName) // Unai
         {
             //DEADLINE 1.B: Find and return the table with the given name
             
@@ -45,7 +45,7 @@ namespace DbManager
             
         }
 
-        public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
+        public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition) // Unai
         {
             //DEADLINE 1.B: Create and new table with the given name and columns. If there is already a table with that name,
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
@@ -56,7 +56,7 @@ namespace DbManager
             
         }
 
-        public bool DropTable(string tableName)
+        public bool DropTable(string tableName) // Maialen
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
@@ -64,7 +64,7 @@ namespace DbManager
             return false;
         }
 
-        public bool Insert(string tableName, List<string> values)
+        public bool Insert(string tableName, List<string> values) // Maialen
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
@@ -73,7 +73,7 @@ namespace DbManager
             
         }
 
-        public Table Select(string tableName, List<string> columns, Condition condition)
+        public Table Select(string tableName, List<string> columns, Condition condition) // Endika
         {
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
@@ -83,7 +83,7 @@ namespace DbManager
             
         }
 
-        public bool DeleteWhere(string tableName, Condition columnCondition)
+        public bool DeleteWhere(string tableName, Condition columnCondition) // Unai
         {
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
@@ -93,7 +93,7 @@ namespace DbManager
             
         }
 
-        public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition)
+        public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition) // Aitana
         {
             //DEADLINE 1.B: Update in the given table all the rows where the condition is true using the SetValues
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
@@ -107,7 +107,7 @@ namespace DbManager
         
 
         
-        public bool Save(string databaseName)
+        public bool Save(string databaseName) // Endika
         {
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
@@ -117,7 +117,7 @@ namespace DbManager
             
         }
 
-        public static Database Load(string databaseName, string username, string password)
+        public static Database Load(string databaseName, string username, string password) // Endika
         {
             //DEADLINE 1.C: Load the (previously saved) database of name databaseName
             //If everything goes ok, return the loaded database (a new instance), null otherwise.

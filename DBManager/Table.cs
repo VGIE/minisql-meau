@@ -11,13 +11,13 @@ namespace DbManager
         
         public string Name { get; private set; } = null;
 
-        public Table(string name, List<ColumnDefinition> columns)
+        public Table(string name, List<ColumnDefinition> columns) // Maialen
         {
             //TODO DEADLINE 1.A: Initialize member variables
             
         }
 
-        public Row GetRow(int i)
+        public Row GetRow(int i) // Maialen
         {
             //TODO DEADLINE 1.A: Return the i-th row
             
@@ -25,13 +25,13 @@ namespace DbManager
             
         }
 
-        public void AddRow(Row row)
+        public void AddRow(Row row) // Maialen
         {
             //TODO DEADLINE 1.A: Add a new row
             
         }
 
-        public int NumRows()
+        public int NumRows() // Maialen
         {
             //TODO DEADLINE 1.A: Return the number of rows
             
@@ -39,7 +39,7 @@ namespace DbManager
             
         }
 
-        public ColumnDefinition GetColumn(int i)
+        public ColumnDefinition GetColumn(int i) // Unai
         {
             //TODO DEADLINE 1.A: Return the i-th column
             
@@ -47,7 +47,7 @@ namespace DbManager
             
         }
 
-        public int NumColumns()
+        public int NumColumns() // Unai
         {
             //TODO DEADLINE 1.A: Return the number of columns
             
@@ -55,14 +55,14 @@ namespace DbManager
             
         }
         
-        public ColumnDefinition ColumnByName(string column)
+        public ColumnDefinition ColumnByName(string column) // Unai
         {
             //TODO DEADLINE 1.A: Return the number of columns
             
             return null;
             
         }
-        public int ColumnIndexByName(string columnName)
+        public int ColumnIndexByName(string columnName) // Aitana
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
             
@@ -71,7 +71,7 @@ namespace DbManager
         }
 
 
-        public override string ToString()
+        public override string ToString() // Aitana
         {
             //TODO DEADLINE 1.A: Return the table as a string. The format is specified in the documentation
             //Valid examples:
@@ -84,13 +84,13 @@ namespace DbManager
             
         }
 
-        public void DeleteIthRow(int row)
+        public void DeleteIthRow(int row) // Unai
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
             
         }
 
-        private List<int> RowIndicesWhereConditionIsTrue(Condition condition)
+        private List<int> RowIndicesWhereConditionIsTrue(Condition condition) // Unai
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
             
@@ -98,13 +98,13 @@ namespace DbManager
             
         }
 
-        public void DeleteWhere(Condition condition)
+        public void DeleteWhere(Condition condition) // Endika
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
             
         }
 
-        public Table Select(List<string> columnNames, Condition condition)
+        public Table Select(List<string> columnNames, Condition condition) // Aitana
         {
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
@@ -113,7 +113,7 @@ namespace DbManager
             
         }
 
-        public bool Insert(List<string> values)
+        public bool Insert(List<string> values) // Aitana
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
             
@@ -121,7 +121,7 @@ namespace DbManager
             
         }
 
-        public bool Update(List<SetValue> setValues, Condition condition)
+        public bool Update(List<SetValue> setValues, Condition condition) // Aitana
         {
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true

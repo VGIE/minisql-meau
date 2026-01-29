@@ -12,14 +12,14 @@ namespace DbManager
         public string Operator { get; private set; }
         public string LiteralValue { get; private set; }
 
-        public Condition(string column, string op, string literalValue)
+        public Condition(string column, string op, string literalValue)  // Maialen
         {
             //TODO DEADLINE 1A: Initialize member variables
             
         }
 
 
-        public bool IsTrue(string value, ColumnDefinition.DataType type)
+        public bool IsTrue(string value, ColumnDefinition.DataType type) // Maialen
         {
             //TODO DEADLINE 1A: return true if the condition is true for this value
             //Depending on the type of the column, the comparison should be different:

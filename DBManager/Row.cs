@@ -13,21 +13,21 @@ namespace DbManager
         private List<ColumnDefinition> ColumnDefinitions = new List<ColumnDefinition>();
         public List<string> Values { get; set; }
 
-        public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
+        public Row(List<ColumnDefinition> columnDefinitions, List<string> values) // Endika
         {
             //TODO DEADLINE 1.A: Initialize member variables
 
             
         }
 
-        public void SetValue(string columnName, string value)
+        public void SetValue(string columnName, string value) // Endika
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
 
             
         }
 
-        public string GetValue(string columnName)
+        public string GetValue(string columnName) // Endika
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
 
@@ -36,7 +36,7 @@ namespace DbManager
             
         }
 
-        public bool IsTrue(Condition condition)
+        public bool IsTrue(Condition condition) // Aitana
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
@@ -49,7 +49,7 @@ namespace DbManager
         private const string Delimiter = ":";
         private const string DelimiterEncoded = "[SEPARATOR]";
 
-        private static string Encode(string value)
+        private static string Encode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
@@ -58,7 +58,7 @@ namespace DbManager
             
         }
 
-        private static string Decode(string value)
+        private static string Decode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
             
@@ -66,7 +66,7 @@ namespace DbManager
             
         }
 
-        public string AsText()
+        public string AsText() // Maialen
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
             
@@ -74,7 +74,7 @@ namespace DbManager
             
         }
 
-        public static Row Parse(List<ColumnDefinition> columns, string value)
+        public static Row Parse(List<ColumnDefinition> columns, string value) // Maialen
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
             
