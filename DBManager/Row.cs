@@ -49,24 +49,31 @@ namespace DbManager
         private const string Delimiter = ":";
         private const string DelimiterEncoded = "[SEPARATOR]";
 
-        private static string Encode(string value) // Unai
+        private static string Encode(string value) // Maialen
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            return value.Replace(Delimiter,DelimiterEncoded);
             
-            return null;
             
         }
 
-        private static string Decode(string value) // Unai
+        private static string Decode(string value) // Maialen
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            return value.Replace(DelimiterEncoded,Delimiter);
             
         }
 
-        public string AsText() // Maialen
+        public string AsText() // Unai
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
             
@@ -74,7 +81,7 @@ namespace DbManager
             
         }
 
-        public static Row Parse(List<ColumnDefinition> columns, string value) // Maialen
+        public static Row Parse(List<ColumnDefinition> columns, string value) // Unai
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
             
