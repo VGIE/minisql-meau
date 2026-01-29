@@ -69,8 +69,16 @@ namespace DbManager
         public string AsText() // Unai
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
+            List<string> newValues = new();
+
+            foreach(string v in Values)
+            {
+                string encodedValue = Encode(v);
+                newValues.Add(encodedValue);
+
+            }
+
+            return string.Join(Delimiter, newValues);
             
         }
 
