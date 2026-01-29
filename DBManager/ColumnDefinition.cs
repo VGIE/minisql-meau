@@ -24,16 +24,18 @@ namespace DbManager
         private static string Encode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
-            // String.replace
-            return null;
+            if (string.IsNullOrEmpty(value)) return null;
+
+            return value.Replace(Delimiter, DelimiterEncoded);
             
         }
 
         private static string Decode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Decode the delimiter in the value
+            if (string.IsNullOrEmpty(value)) return null;
             
-            return null;
+            return value.Replace(DelimiterEncoded, Delimiter);
             
         }
 
