@@ -1,3 +1,5 @@
+using DbManager;
+
 namespace OurTests
 {
     public class ColumnDefinitionsTests
@@ -10,5 +12,16 @@ namespace OurTests
 
         }
         */
+
+        [Fact]
+        public void TestEncode()
+        {
+
+            var column = new ColumnDefinition();
+
+            var result = column.Encode("->");
+            
+            Assert.Equal("->", "[ARROW]");
+        }
     }
 }

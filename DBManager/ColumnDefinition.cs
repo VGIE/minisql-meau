@@ -24,7 +24,7 @@ namespace DbManager
         private static string Encode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
-            
+            // String.replace
             return null;
             
         }
