@@ -65,7 +65,11 @@ namespace DbManager
         public int ColumnIndexByName(string columnName) // Aitana
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-            
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name == columnName)
+                    return i;
+            }
             return -1;
             
         }
@@ -116,8 +120,14 @@ namespace DbManager
         public bool Insert(List<string> values) // Aitana
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-            
-            return false;
+         
+            if (values.Count != ColumnDefinitions.Count)
+                return false;
+
+            Row newRow = new Row(ColumnDefinitions, values);
+            Rows.Add(newRow);
+            return true;
+          
             
         }
 

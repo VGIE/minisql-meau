@@ -1,6 +1,7 @@
 using DbManager.Parser;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,10 +41,22 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
+           
 
-            
-            return false;
-            
+            ColumnDefinition c = null;
+
+            foreach (var col in ColumnDefinitions)
+            {
+                if (col.Name == condition.ColumnName)
+                {
+                    c = col;
+                }
+            }
+            string rowValue = GetValue(condition.ColumnName);
+
+           
+            return condition.IsTrue(rowValue, c.Type);
+
         }
 
         private const string Delimiter = ":";

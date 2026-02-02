@@ -26,7 +26,9 @@ namespace DbManager
         public Database(string adminUsername, string adminPassword) // Aitana
         {
             //DEADLINE 1.B: Initalize the member variables
-            
+
+
+
         }
 
         public bool AddTable(Table table) // Aitana
