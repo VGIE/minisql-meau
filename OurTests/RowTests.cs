@@ -11,7 +11,7 @@ namespace OurTests
         {
 
         }
-        */
+
         [Fact]
         public void GetValueAndSetValueTest()
         {
