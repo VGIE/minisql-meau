@@ -17,13 +17,21 @@ namespace OurTests
         [Fact]
         public void TestAsText()
         {
-            var row = new Row();
-            row.Values = new List<string> { "A", "B->C", "D->", "E" };
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C1"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C2"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C3"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C4"),
+            };
+
+            var values = new List<string> { "A", "B->C", "D->", "E" };
+
+            var row = new Row(columns, values);
 
             var result = row.AsText();
 
             Assert.Equal("A->B[ARROW]C->D[ARROW]->E", result);
         }
-        
     }
 }
