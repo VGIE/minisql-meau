@@ -1,6 +1,4 @@
-using Xunit;
 using DbManager;
-using System.Collections.Generic;
 
 namespace OurTests
 {
@@ -11,7 +9,7 @@ namespace OurTests
         [Fact]
         public void TestIsTrue()
         {
-            List<ColumnDefinition> ColumnDefinitions = new List<ColumnDefinition>();
+
         }
 
         [Fact]
@@ -33,5 +31,6 @@ namespace OurTests
 
             Assert.Equal("A->B[ARROW]C->D[ARROW]->E", result);
         }
+        
     }
 }
