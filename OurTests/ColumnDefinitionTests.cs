@@ -11,7 +11,6 @@ namespace OurTests
         {
 
         }
-        */
         [Fact]
         public void TestAsText()
         {
