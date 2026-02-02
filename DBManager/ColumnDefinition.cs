@@ -26,7 +26,7 @@ namespace DbManager
         private static string Encode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
-            if (string.IsNullOrEmpty(value)) return null;
+            if (string.IsNullOrEmpty(value)) return value;
 
             return value.Replace(Delimiter, DelimiterEncoded);
             
@@ -35,7 +35,7 @@ namespace DbManager
         private static string Decode(string value) // Unai
         {
             //TODO DEADLINE 1.C: Decode the delimiter in the value
-            if (string.IsNullOrEmpty(value)) return null;
+            if (string.IsNullOrEmpty(value)) return value;
             
             return value.Replace(DelimiterEncoded, Delimiter);
             

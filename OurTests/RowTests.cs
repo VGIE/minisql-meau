@@ -7,11 +7,22 @@ namespace OurTests
         //TODO DEADLINE 1A : Create your own tests for Row
         
         [Fact]
-        public void IsTrue()
+        public void TestIsTrue()
         {
 
         }
 
+        [Fact]
+        public void TestAsText()
+        {
+            var row = new Row();
+            row.Values = new List<string> { "A", "B->C", "D->", "E" };
+
+            var result = row.AsText();
+
+            Assert.Equal("A->B[ARROW]C->D[ARROW]->E", result);
+        }
+        
         [Fact]
         public void GetValueAndSetValueTest()
         {
