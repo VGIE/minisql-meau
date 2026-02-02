@@ -29,7 +29,7 @@ namespace OurTests
 
             var result = row.AsText();
 
-            Assert.Equal("A:B[SEPARATOR]C:D[SEPARATOR]:E", result);
+            Assert.Equal("A:B[SEPARATOR]C:D[SEPARATOR]:E",result);
         }
         
     }
