@@ -17,24 +17,33 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values) // Endika
         {
             //TODO DEADLINE 1.A: Initialize member variables
-
-            
+            this.ColumnDefinitions = columnDefinitions;
+            this.Values = values;
         }
 
         public void SetValue(string columnName, string value) // Endika
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-
-            
+            for (int i = 0; i < this.ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name == columnName)
+                {
+                    Values[i]=value;
+                    return;
+                }
+            }
         }
 
         public string GetValue(string columnName) // Endika
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-
-            
+            for (int i = 0; i < this.ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name == columnName) {
+                return Values[i];
+                }
+            }
             return null;
-            
         }
 
         public bool IsTrue(Condition condition) // Aitana
@@ -62,35 +71,49 @@ namespace DbManager
         private const string Delimiter = ":";
         private const string DelimiterEncoded = "[SEPARATOR]";
 
-        private static string Encode(string value) // Unai
+        private static string Encode(string value) // Maialen
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            return value.Replace(Delimiter,DelimiterEncoded);
             
-            return null;
             
         }
 
-        private static string Decode(string value) // Unai
+        private static string Decode(string value) // Maialen
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            return value.Replace(DelimiterEncoded,Delimiter);
             
         }
 
-        public string AsText() // Maialen
+        public string AsText() // Unai
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
+            List<string> newValues = new();
+
+            foreach(string v in Values)
+            {
+                string encodedValue = Encode(v);
+                newValues.Add(encodedValue);
+
+            }
+
+            return string.Join(Delimiter, newValues);
             
         }
 
-        public static Row Parse(List<ColumnDefinition> columns, string value) // Maialen
+        public static Row Parse(List<ColumnDefinition> columns, string value) // Unai
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            
             return null;
             
         }

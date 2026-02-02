@@ -27,7 +27,7 @@ namespace OurTests
 
 
         [Fact]
-        public void IsTrue()
+        public void TestIsTrue()
         {
             Row testRow = CreateTestRow();
 
@@ -45,8 +45,38 @@ namespace OurTests
 
             Condition ageExact = new Condition("Age", "=", "67");
             Assert.True(testRow.IsTrue(ageExact));
+        }
 
-    }
+        [Fact]
+        public void TestAsText()
+        {
+            var row = new Row();
+            row.Values = new List<string> { "A", "B->C", "D->", "E" };
 
+            var result = row.AsText();
+
+            Assert.Equal("A->B[ARROW]C->D[ARROW]->E", result);
+        }
+        
+        [Fact]
+        public void GetValueAndSetValueTest()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+            };
+            List<string> rowValues = new List<string>()
+            {
+                "Jacinto", "37"
+            };
+            Row testRow = new Row(columns, rowValues);
+            Assert.Equal("Jacinto", testRow.GetValue("Name"));
+            Assert.Equal("37", testRow.GetValue("Age"));
+
+            testRow.SetValue("Name", "Maider");
+            Assert.Equal("Maider", testRow.GetValue("Name"));
+            Assert.Null(testRow.GetValue("Nombre"));
+        }
     }
 }
