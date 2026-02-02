@@ -61,8 +61,11 @@ namespace DbManager
                     c = col;
                 }
             }
+            if (c == null)
+            {
+                return false;
+            }
             string rowValue = GetValue(condition.ColumnName);
-
            
             return condition.IsTrue(rowValue, c.Type);
 
