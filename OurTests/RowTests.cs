@@ -23,13 +23,13 @@ namespace OurTests
                 new ColumnDefinition(ColumnDefinition.DataType.String, "C4"),
             };
 
-            var values = new List<string> { "A", "B->C", "D->", "E" };
+            var values = new List<string> { "A", "B:C", "D:", "E" };
 
             var row = new Row(columns, values);
 
             var result = row.AsText();
 
-            Assert.Equal("A->B[ARROW]C->D[ARROW]->E", result);
+            Assert.Equal("A:B[SEPARATOR]C:D[SEPARATOR]:E", result);
         }
         
     }
