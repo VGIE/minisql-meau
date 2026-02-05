@@ -1,6 +1,7 @@
 using DbManager.Parser;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,10 +50,25 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
+           
 
-            
-            return false;
-            
+            ColumnDefinition c = null;
+
+            foreach (var col in ColumnDefinitions)
+            {
+                if (col.Name == condition.ColumnName)
+                {
+                    c = col;
+                }
+            }
+            if (c == null)
+            {
+                return false;
+            }
+            string rowValue = GetValue(condition.ColumnName);
+           
+            return condition.IsTrue(rowValue, c.Type);
+
         }
 
         private const string Delimiter = ":";
@@ -92,7 +108,17 @@ namespace DbManager
         public static Row Parse(List<ColumnDefinition> columns, string value) // Unai
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            return null;
+            string[] parts = value.Split(Delimiter);
+
+            Row row = new(columns, []);
+
+            foreach (string part in parts)
+            {
+                string decoded = Decode(part);
+                row.Values.Add(decoded);
+            }
+            
+            return row;
             
         }
     }
