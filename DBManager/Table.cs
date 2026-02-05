@@ -42,10 +42,6 @@ namespace DbManager
             {
                 Rows.Add(row);
             }
-
-            
-
-            
             
         }
 
