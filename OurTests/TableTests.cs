@@ -18,6 +18,10 @@ namespace OurTests
             Assert.Equal(-1, indexWrong);
         }
 
+        [Fact]
+        public void TestGetColumn()
+        {
 
+        }
     }
 }
