@@ -66,6 +66,28 @@ namespace OurTests
 
             Assert.Equal("A:B[SEPARATOR]C:D[SEPARATOR]:E",result);
         }
+
+        [Fact]
+        public void TestParse()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C1"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C2"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C3"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "C4"),
+            };
+
+            string initialText = "A:B[SEPARATOR]C:D[SEPARATOR]:E";
+
+            Row result = Row.Parse(columns, initialText);
+
+            Assert.Equal(4, result.Values.Count);
+            Assert.Equal("A", result.Values[0]);
+            Assert.Equal("B:C", result.Values[1]);
+            Assert.Equal("D:", result.Values[2]);
+            Assert.Equal("E", result.Values[3]);
+        }
         
     }
 }
