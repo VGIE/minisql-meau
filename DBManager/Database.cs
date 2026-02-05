@@ -19,13 +19,18 @@ namespace DbManager
         public Manager SecurityManager { get; private set; }
 
         //This constructor should only be used from Load (without needing to set a password for the user). It cannot be used from any other class
-        private Database() // ?
+        private Database() // Maialen
         {
+            Tables = new List<Table>();
+            LastErrorMessage = string.Empty;
+            SecurityManager = new Manager("system");
+            
         }
 
-        public Database(string adminUsername, string adminPassword) // Aitana
+        public Database(string adminUsername, string adminPassword) // Maialen
         {
             //DEADLINE 1.B: Initalize the member variables
+           
             
         }
 
@@ -68,7 +73,7 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
+        
             return false;
             
         }
