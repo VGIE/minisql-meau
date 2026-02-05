@@ -41,20 +41,6 @@ namespace OurTests
         }
         
         [Fact]
-        public void ColumnIndexByNameTest()
-        {
-            Table table = Table.CreateTestTable();
-
-            int indexName = table.ColumnIndexByName("Name");
-            int indexAge = table.ColumnIndexByName("Age");
-            int indexWrong = table.ColumnIndexByName("NonExistent");
-
-            Assert.Equal(0, indexName); 
-            Assert.Equal(2, indexAge);  
-            Assert.Equal(-1, indexWrong);
-        }
-
-        [Fact]
         public void TestGetColumnAndNumColumns()
         {
             Table table = Table.CreateTestTable();
@@ -70,5 +56,38 @@ namespace OurTests
             Assert.Equal(3, numCols);
 
         }
+
+        [Fact]
+        public void TestColumnByName()
+        {
+            Table table = Table.CreateTestTable();
+
+            var colName = table.ColumnByName("Name");
+            var colAge = table.ColumnByName("Age");
+            var colWrong = table.ColumnByName("NonExistent");
+
+            Assert.NotNull(colName);
+            Assert.Equal("Name", colName.Name);
+
+            Assert.NotNull(colAge);
+            Assert.Equal("Age", colAge.Name);
+
+            Assert.Null(colWrong);
+        }
+
+        [Fact]
+        public void ColumnIndexByNameTest()
+        {
+            Table table = Table.CreateTestTable();
+
+            int indexName = table.ColumnIndexByName("Name");
+            int indexAge = table.ColumnIndexByName("Age");
+            int indexWrong = table.ColumnIndexByName("NonExistent");
+
+            Assert.Equal(0, indexName); 
+            Assert.Equal(2, indexAge);  
+            Assert.Equal(-1, indexWrong);
+        }
+
     }
 }
