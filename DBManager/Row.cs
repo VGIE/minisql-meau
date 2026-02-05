@@ -78,23 +78,14 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-            if (string.IsNullOrEmpty(value))
-            {
-                return value;
-            }
-            return value.Replace(Delimiter,DelimiterEncoded);
-            
+            return null;
             
         }
 
         private static string Decode(string value) // Maialen
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            if (string.IsNullOrEmpty(value))
-            {
-                return value;
-            }
-            return value.Replace(DelimiterEncoded,Delimiter);
+            return null;
             
         }
 

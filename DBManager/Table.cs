@@ -14,6 +14,10 @@ namespace DbManager
         public Table(string name, List<ColumnDefinition> columns) // Maialen
         {
             //TODO DEADLINE 1.A: Initialize member variables
+            this.Name=name;
+            this.ColumnDefinitions = columns;
+            this.Rows = new List<Row> ();
+
             
         }
 
@@ -21,13 +25,27 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the i-th row
             
+            if(i>=0 && i < Rows.Count)
+            {
+                return Rows [i];
+            }
+            
             return null;
+
             
         }
 
         public void AddRow(Row row) // Maialen
         {
             //TODO DEADLINE 1.A: Add a new row
+            if(row != null)
+            {
+                Rows.Add(row);
+            }
+
+            
+
+            
             
         }
 
@@ -35,7 +53,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the number of rows
             
-            return 0;
+            return Rows.Count;
             
         }
 
