@@ -30,6 +30,11 @@ namespace DbManager
         public Database(string adminUsername, string adminPassword) // Maialen
         {
             //DEADLINE 1.B: Initalize the member variables
+            m_username = adminUsername;
+            Tables = new List<Table>();
+            LastErrorMessage = string.Empty;
+            SecurityManager = new Manager(adminUsername);
+
            
             
         }
