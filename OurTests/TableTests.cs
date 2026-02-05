@@ -55,6 +55,43 @@ namespace OurTests
 
         }
 
+        [Fact]
+        public void ToStringTest()
+        {
+            Table table = Table.CreateTestTable();
+
+            string expected = "['Name','Height','Age']{'Rodolfo','1.62','25'}{'Maider','1.67','67'}{'Pepe','1.55','51'}";
+            Assert.Equal(expected, table.ToString());
+
+            
+
+            Table tableEmpty = new Table("Empty", new List<ColumnDefinition>());
+            Assert.Equal("", tableEmpty.ToString());
+
+            List<ColumnDefinition> columns = new List<ColumnDefinition>
+             {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "OnlyColumns")
+            };
+
+            Table tableOnlyColumns = new Table("OnlyCols", columns);
+            Assert.Equal("['OnlyColumns']", tableOnlyColumns.ToString());
+        }
+        [Fact]
+        public void InsertTest()
+        {
+            Table table = Table.CreateTestTable(); 
+
+            
+            Assert.True(table.Insert(new List<string> { "Aitana", "1.70", "20" }));
+            Assert.Equal(4, table.NumRows());
+            Assert.Equal("Aitana", table.GetRow(3).Values[0]);
+
+            
+            Assert.False(table.Insert(new List<string> { "Error" }));
+            Assert.Equal(4, table.NumRows()); 
+
+        }
 
     }
-}
+
+    }

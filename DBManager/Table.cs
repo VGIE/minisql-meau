@@ -101,9 +101,41 @@ namespace DbManager
             //"['Name','Age']{'Adolfo','23'}{'Jacinto','24'}" <- two columns, two rows
             //"" <- no columns, no rows
             //"['Name']" <- one column, no rows
-            
-            return null;
-            
+
+            if (ColumnDefinitions.Count == 0 && Rows.Count == 0)
+            {
+                return "";
+            }
+            string result = "";
+            if (ColumnDefinitions.Count > 0 || Rows.Count >0)
+            {
+                result += "[";
+                for (int i = 0; i < ColumnDefinitions.Count; i++)
+                {
+                    result += "'" + ColumnDefinitions[i].Name + "'";
+
+                    if (i < ColumnDefinitions.Count - 1)
+                        result += ",";
+                }
+                result += "]";
+
+            }
+
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                result += "{";
+                for (int j = 0; j < Rows[i].Values.Count; j++)
+                {
+                    result += "'" + Rows[i].Values[j] + "'";
+
+                    if (j < Rows[i].Values.Count - 1)
+                        result += ",";
+                }
+                result += "}";
+            }
+
+            return result;
+
         }
 
         public void DeleteIthRow(int row) // Unai
@@ -138,11 +170,18 @@ namespace DbManager
         public bool Insert(List<string> values) // Aitana
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-         
-            
+            if (values == null || values.Count != ColumnDefinitions.Count)
+            {
+                return false;
+            }
+
+            Row newRow = new Row(ColumnDefinitions, values);
+
+       
+            Rows.Add(newRow);
+
             return true;
-          
-            
+  
         }
 
         public bool Update(List<SetValue> setValues, Condition condition) // Aitana
