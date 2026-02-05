@@ -55,8 +55,19 @@ namespace OurTests
         }
 
         [Fact]
-        public void TestGetColumn()
+        public void TestGetColumnAndNumColumns()
         {
+            Table table = Table.CreateTestTable();
+
+            int index = 2;
+
+            var column = table.GetColumn(index);
+
+            Assert.NotNull(column);
+
+            int numCols = table.NumColumns();
+
+            Assert.Equal(3, numCols);
 
         }
     }
