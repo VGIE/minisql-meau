@@ -54,6 +54,21 @@ namespace OurTests
             Assert.Equal(-1, indexWrong);
         }
 
+        [Fact]
+        public void TestGetColumnAndNumColumns()
+        {
+            Table table = Table.CreateTestTable();
 
+            int index = 2;
+
+            var column = table.GetColumn(index);
+
+            Assert.NotNull(column);
+
+            int numCols = table.NumColumns();
+
+            Assert.Equal(3, numCols);
+
+        }
     }
 }

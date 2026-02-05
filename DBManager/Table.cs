@@ -60,7 +60,13 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i) // Unai
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            
+            for (int j = 0; j < ColumnDefinitions.Count; j++)
+            {
+                if (j == i)
+                {
+                    return ColumnDefinitions[i];
+                }
+            }
             return null;
             
         }
@@ -68,8 +74,12 @@ namespace DbManager
         public int NumColumns() // Unai
         {
             //TODO DEADLINE 1.A: Return the number of columns
-            
-            return 0;
+            int count = 0;
+            foreach (ColumnDefinition col in ColumnDefinitions)
+            {
+                count++;
+            }
+            return count;
             
         }
         
