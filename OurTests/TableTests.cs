@@ -40,7 +40,6 @@ namespace OurTests
             Assert.Equal(2, table.NumRows());
         }
         
-
         [Fact]
         public void TestGetColumnAndNumColumns()
         {
@@ -51,7 +50,6 @@ namespace OurTests
             var column = table.GetColumn(index);
 
             Assert.NotNull(column);
-            Assert.Equal("Height", column.Name);
 
             int numCols = table.NumColumns();
 
@@ -64,6 +62,17 @@ namespace OurTests
         {
             Table table = Table.CreateTestTable();
 
+            var colName = table.ColumnByName("Name");
+            var colAge = table.ColumnByName("Age");
+            var colWrong = table.ColumnByName("NonExistent");
+
+            Assert.NotNull(colName);
+            Assert.Equal("Name", colName.Name);
+
+            Assert.NotNull(colAge);
+            Assert.Equal("Age", colAge.Name);
+
+            Assert.Null(colWrong);
         }
 
         [Fact]

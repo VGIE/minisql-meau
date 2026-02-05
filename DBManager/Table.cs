@@ -82,7 +82,13 @@ namespace DbManager
         public ColumnDefinition ColumnByName(string column) // Unai
         {
             //TODO DEADLINE 1.A: Return the number of columns
-            
+            foreach (ColumnDefinition col in ColumnDefinitions)
+            {
+                if (column == col.Name)
+                {
+                    return col;
+                }
+            }
             return null;
             
         }
