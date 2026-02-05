@@ -121,11 +121,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
          
-            if (values.Count != ColumnDefinitions.Count)
-                return false;
-
-            Row newRow = new Row(ColumnDefinitions, values);
-            Rows.Add(newRow);
+            
             return true;
           
             
