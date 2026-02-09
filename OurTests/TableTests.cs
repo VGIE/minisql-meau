@@ -89,5 +89,20 @@ namespace OurTests
             Assert.Equal(-1, indexWrong);
         }
 
+        [Fact]
+        public void TestDeleteIthRow()
+        {
+            Table table = Table.CreateTestTable();
+            int rowCount = table.NumRows();
+            int indexToDelete = 1;
+
+            string expectedName = Table.TestColumn1Row3;
+
+            table.DeleteIthRow(indexToDelete);
+
+            Assert.Equal(rowCount - 1, table.NumRows());
+            Assert.Equal(expectedName, table.GetRow(indexToDelete).Values[0]);
+            Assert.Equal(Table.TestColumn1Row1, table.GetRow(0).Values[0]);
+        }                                            
     }
 }

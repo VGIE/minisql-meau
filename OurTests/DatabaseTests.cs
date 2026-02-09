@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DbManager.Parser;
 namespace OurTests
 {
-    public class UnitTest1
+    public class DatabaseTests
     {
         //TODO DEADLINE 1B : Create your own tests for Database
         /*
@@ -13,6 +13,23 @@ namespace OurTests
 
         }
         */
+        [Fact]
+        public void TestTableByName()
+        {
+            Database db = Database.CreateTestDatabase();
+            string nameToSearch = Table.TestTableName;
+
+            Table table = db.TableByName(nameToSearch);
+
+            Assert.NotNull(table);
+            Assert.Equal(nameToSearch, table.Name);
+
+            Table ghostTable = db.TableByName("TablaInexistente");
+            Assert.Null(ghostTable);
+        }
+    }
+
+    
 
         /*DropTable - Maialen*/
 
