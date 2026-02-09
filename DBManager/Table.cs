@@ -17,8 +17,6 @@ namespace DbManager
             this.Name=name;
             this.ColumnDefinitions = columns;
             this.Rows = new List<Row> ();
-
-            
         }
 
         public Row GetRow(int i) // Maialen
@@ -121,15 +119,25 @@ namespace DbManager
         public void DeleteIthRow(int row) // Unai
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            
+            if (row >= 0 && row < Rows.Count)
+            {
+                Rows.RemoveAt(row);
+            }
         }
 
         private List<int> RowIndicesWhereConditionIsTrue(Condition condition) // Unai
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
-            
-            return null;
-            
+            List<int> isTrueList = [];
+
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                if (Rows[i].IsTrue(condition))
+                {
+                    isTrueList.Add(i);
+                }
+            }
+            return isTrueList;
         }
 
         public void DeleteWhere(Condition condition) // Endika
