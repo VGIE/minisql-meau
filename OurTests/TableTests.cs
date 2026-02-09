@@ -103,6 +103,13 @@ namespace OurTests
             Assert.Equal(rowCount - 1, table.NumRows());
             Assert.Equal(expectedName, table.GetRow(indexToDelete).Values[0]);
             Assert.Equal(Table.TestColumn1Row1, table.GetRow(0).Values[0]);
-        }                                            
+        }
+        [Fact]
+        public void TestDeleteWhere()
+        {
+            Table table = Table.CreateTestTable();
+            table.DeleteWhere(new Condition("Age", "=", "67"));
+            Assert.Equal(2, table.NumRows());
+        }
     }
 }

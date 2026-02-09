@@ -143,7 +143,12 @@ namespace DbManager
         public void DeleteWhere(Condition condition) // Endika
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
-            
+            if(condition == null) return;
+            var indices= RowIndicesWhereConditionIsTrue(condition);
+            for (int i=0; i<indices.Count; i++)
+            {
+                Rows.RemoveAt(indices[i]);
+            }    
         }
 
         public Table Select(List<string> columnNames, Condition condition) // Aitana
