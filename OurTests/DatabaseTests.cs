@@ -51,9 +51,6 @@ namespace OurTests
             Assert.NotNull(db.TableByName("PerfectTestTable"));
             Assert.Equal("Street", db.TableByName("PerfectTestTable").GetColumn(0).Name);
         }
-    }
-
-
 
 
         /*DropTable - Maialen*/
