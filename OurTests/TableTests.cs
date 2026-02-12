@@ -41,6 +41,41 @@ namespace OurTests
         }
         
         [Fact]
+        public void TestGetColumnAndNumColumns()
+        {
+            Table table = Table.CreateTestTable();
+
+            int index = 2;
+
+            var column = table.GetColumn(index);
+
+            Assert.NotNull(column);
+
+            int numCols = table.NumColumns();
+
+            Assert.Equal(3, numCols);
+
+        }
+
+        [Fact]
+        public void TestColumnByName()
+        {
+            Table table = Table.CreateTestTable();
+
+            var colName = table.ColumnByName("Name");
+            var colAge = table.ColumnByName("Age");
+            var colWrong = table.ColumnByName("NonExistent");
+
+            Assert.NotNull(colName);
+            Assert.Equal("Name", colName.Name);
+
+            Assert.NotNull(colAge);
+            Assert.Equal("Age", colAge.Name);
+
+            Assert.Null(colWrong);
+        }
+
+        [Fact]
         public void ColumnIndexByNameTest()
         {
             Table table = Table.CreateTestTable();
@@ -79,19 +114,30 @@ namespace OurTests
         [Fact]
         public void InsertTest()
         {
-            Table table = Table.CreateTestTable(); 
-
-            
+            Table table = Table.CreateTestTable();
             Assert.True(table.Insert(new List<string> { "Aitana", "1.70", "20" }));
             Assert.Equal(4, table.NumRows());
             Assert.Equal("Aitana", table.GetRow(3).Values[0]);
 
-            
-            Assert.False(table.Insert(new List<string> { "Error" }));
-            Assert.Equal(4, table.NumRows()); 
 
+            Assert.False(table.Insert(new List<string> { "Error" }));
+            Assert.Equal(4, table.NumRows());
         }
 
-    }
+        [Fact]
+        public void TestDeleteIthRow()
+        {
+            Table table = Table.CreateTestTable();
+            int rowCount = table.NumRows();
+            int indexToDelete = 1;
+
+            string expectedName = Table.TestColumn1Row3;
+
+            table.DeleteIthRow(indexToDelete);
+
+            Assert.Equal(rowCount - 1, table.NumRows());
+            Assert.Equal(expectedName, table.GetRow(indexToDelete).Values[0]);
+            Assert.Equal(Table.TestColumn1Row1, table.GetRow(0).Values[0]);
+        }                                            
 
     }

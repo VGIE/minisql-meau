@@ -78,31 +78,47 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-            return null;
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+            return value.Replace(Delimiter,DelimiterEncoded);
+
             
         }
 
         private static string Decode(string value) // Maialen
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            return null;
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+             }
+            return value.Replace(DelimiterEncoded,Delimiter);
+
+
             
         }
 
         public string AsText() // Unai
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            List<string> newValues = new();
+            string result = "";
 
-            foreach(string v in Values)
+            for (int i = 0; i < Values.Count; i++)
             {
-                string encodedValue = Encode(v);
-                newValues.Add(encodedValue);
+                string encodedValue = Encode(Values[i]);
 
+                result += encodedValue;
+
+                if (i < Values.Count - 1)
+                {
+                    result += Delimiter;
+                }
             }
 
-            return string.Join(Delimiter, newValues);
-            
+            return result;
+
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value) // Unai

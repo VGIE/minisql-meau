@@ -17,8 +17,6 @@ namespace DbManager
             this.Name=name;
             this.ColumnDefinitions = columns;
             this.Rows = new List<Row> ();
-
-            
         }
 
         public Row GetRow(int i) // Maialen
@@ -42,10 +40,6 @@ namespace DbManager
             {
                 Rows.Add(row);
             }
-
-            
-
-            
             
         }
 
@@ -60,7 +54,13 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i) // Unai
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            
+            for (int j = 0; j < ColumnDefinitions.Count; j++)
+            {
+                if (j == i)
+                {
+                    return ColumnDefinitions[i];
+                }
+            }
             return null;
             
         }
@@ -68,15 +68,25 @@ namespace DbManager
         public int NumColumns() // Unai
         {
             //TODO DEADLINE 1.A: Return the number of columns
-            
-            return 0;
+            int count = 0;
+            foreach (ColumnDefinition col in ColumnDefinitions)
+            {
+                count++;
+            }
+            return count;
             
         }
         
         public ColumnDefinition ColumnByName(string column) // Unai
         {
             //TODO DEADLINE 1.A: Return the number of columns
-            
+            foreach (ColumnDefinition col in ColumnDefinitions)
+            {
+                if (column == col.Name)
+                {
+                    return col;
+                }
+            }
             return null;
             
         }
@@ -141,15 +151,25 @@ namespace DbManager
         public void DeleteIthRow(int row) // Unai
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            
+            if (row >= 0 && row < Rows.Count)
+            {
+                Rows.RemoveAt(row);
+            }
         }
 
         private List<int> RowIndicesWhereConditionIsTrue(Condition condition) // Unai
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
-            
-            return null;
-            
+            List<int> isTrueList = [];
+
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                if (Rows[i].IsTrue(condition))
+                {
+                    isTrueList.Add(i);
+                }
+            }
+            return isTrueList;
         }
 
         public void DeleteWhere(Condition condition) // Endika

@@ -30,6 +30,11 @@ namespace DbManager
         public Database(string adminUsername, string adminPassword) // Maialen
         {
             //DEADLINE 1.B: Initalize the member variables
+            m_username = adminUsername;
+            Tables = new List<Table>();
+            LastErrorMessage = string.Empty;
+            SecurityManager = new Manager(adminUsername);
+
            
             
         }
@@ -45,9 +50,14 @@ namespace DbManager
         public Table TableByName(string tableName) // Unai
         {
             //DEADLINE 1.B: Find and return the table with the given name
-            
+            foreach (Table table in Tables)
+            {
+                if (table.Name == tableName)
+                {
+                    return table;
+                }
+            }
             return null;
-            
         }
 
         public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition) // Unai
@@ -56,26 +66,67 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
-            
+            if (TableByName(tableName) != null)
+            {
+                LastErrorMessage = Constants.TableAlreadyExistsError;
+                return false;
+            }
+
+            if (ColumnDefinition.Count == 0)
+            {
+                LastErrorMessage = Constants.DatabaseCreatedWithoutColumnsError;
+                return false;
+            }
+
+            Table newTable = new(tableName, ColumnDefinition);
+            Tables.Add(newTable);
+
+            LastErrorMessage = Constants.CreateTableSuccess;
+            return true;
+
+
         }
 
         public bool DropTable(string tableName) // Maialen
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
+            Table table = TableByName(tableName);
+           
+            if(table==null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+           
+            Tables.Remove(table);
+            LastErrorMessage = Constants.DropTableSuccess;
             
-            return false;
+            return true;
+            
         }
 
         public bool Insert(string tableName, List<string> values) // Maialen
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-        
-            return false;
+            Table table = TableByName(tableName);
             
+            if (table == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            bool success = table.Insert(values);
+            
+            if(success)
+            {
+                LastErrorMessage=Constants.InsertSuccess;
+                return true;
+            }
+           
+            return false;
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition) // Endika
@@ -93,9 +144,41 @@ namespace DbManager
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-            
-            return false;
-            
+
+            // Check for table
+            Table selectedTable = null;
+            foreach (Table table in Tables)
+            {
+                if (table.Name == tableName)
+                {
+                    selectedTable = table;
+                    break;
+                }
+            }
+
+            if (selectedTable == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            // Check for column
+            if (selectedTable.ColumnIndexByName(columnCondition.ColumnName) == -1)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+
+            // Final removal
+            for (int i = selectedTable.NumRows() - 1; i >= 0; i--)
+            {
+                if (selectedTable.GetRow(i).IsTrue(columnCondition))
+                {
+                    selectedTable.DeleteIthRow(i);
+                }
+            }
+
+            return true;
         }
 
         public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition) // Aitana
