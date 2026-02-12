@@ -5,15 +5,15 @@ namespace OurTests
     public class TableTests
     {
         //TODO DEADLINE 1A : Create your own tests for Table
-        
+
         [Fact]
         public void TestGetRow()
         {
-            List<ColumnDefinition>columns = new List<ColumnDefinition>
+            List<ColumnDefinition> columns = new List<ColumnDefinition>
             {
                 new ColumnDefinition(ColumnDefinition.DataType.String,"Name")
             };
-            Table table = new Table("TestTable",columns);
+            Table table = new Table("TestTable", columns);
             Row row1 = new Row(columns, new List<string> { "Maialen" });
             Row row2 = new Row(columns, new List<string> { "Unai" });
             table.AddRow(row1);
@@ -28,18 +28,18 @@ namespace OurTests
         [Fact]
         public void AddRowAndNumRows()
         {
-          List<ColumnDefinition> columns = new List<ColumnDefinition> 
-            { 
-                new ColumnDefinition(ColumnDefinition.DataType.String, "Name") 
+            List<ColumnDefinition> columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
             };
             Table table = new Table("TestTable", columns);
-            Assert.Equal(0, table.NumRows());  
+            Assert.Equal(0, table.NumRows());
             table.AddRow(new Row(columns, new List<string> { "Maialen" }));
             Assert.Equal(1, table.NumRows());
             table.AddRow(new Row(columns, new List<string> { "Unai" }));
             Assert.Equal(2, table.NumRows());
         }
-        
+
         [Fact]
         public void TestGetColumnAndNumColumns()
         {
@@ -84,8 +84,8 @@ namespace OurTests
             int indexAge = table.ColumnIndexByName("Age");
             int indexWrong = table.ColumnIndexByName("NonExistent");
 
-            Assert.Equal(0, indexName); 
-            Assert.Equal(2, indexAge);  
+            Assert.Equal(0, indexName);
+            Assert.Equal(2, indexAge);
             Assert.Equal(-1, indexWrong);
 
         }
@@ -98,7 +98,7 @@ namespace OurTests
             string expected = "['Name','Height','Age']{'Rodolfo','1.62','25'}{'Maider','1.67','67'}{'Pepe','1.55','51'}";
             Assert.Equal(expected, table.ToString());
 
-            
+
 
             Table tableEmpty = new Table("Empty", new List<ColumnDefinition>());
             Assert.Equal("", tableEmpty.ToString());
@@ -138,6 +138,6 @@ namespace OurTests
             Assert.Equal(rowCount - 1, table.NumRows());
             Assert.Equal(expectedName, table.GetRow(indexToDelete).Values[0]);
             Assert.Equal(Table.TestColumn1Row1, table.GetRow(0).Values[0]);
-        }                                            
-
+        }
     }
+}
