@@ -146,15 +146,7 @@ namespace DbManager
             //If everything goes ok, return true
 
             // Check for table
-            Table selectedTable = null;
-            foreach (Table table in Tables)
-            {
-                if (table.Name == tableName)
-                {
-                    selectedTable = table;
-                    break;
-                }
-            }
+            Table selectedTable = TableByName(tableName);
 
             if (selectedTable == null)
             {
