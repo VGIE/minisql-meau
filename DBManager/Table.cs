@@ -162,10 +162,46 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
-            
-            return null;
-            
+
+
+            List<ColumnDefinition> selectedColumns = new List<ColumnDefinition>();
+            foreach (string name in columnNames)
+            {
+                int index = ColumnIndexByName(name);
+                if (index != -1)
+                {
+                    selectedColumns.Add(ColumnDefinitions[index]);
+                }
+            }
+
+            Table result = new Table("Result", selectedColumns);
+
+            foreach (var row in Rows)
+            {
+                if (condition == null || row.IsTrue(condition))
+                {
+                    List<string> selectedValues = new List<string>();
+
+                    foreach (var name in columnNames)
+                    {
+                        int colIndex = ColumnIndexByName(name);
+                        if (colIndex != -1)
+                        {
+                            selectedValues.Add(row.Values[colIndex]);
+                        }
+                    }
+
+                  
+                    Row newRow = new Row(selectedColumns, selectedValues);
+                    result.AddRow(newRow);
+                }
+            }
+
+            return result;
+
         }
+            
+        
 
         public bool Insert(List<string> values) // Aitana
         {
@@ -188,9 +224,23 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true
-            
-            return false;
-            
+
+            if (condition == null) return false;
+
+            if (setValues == null || setValues.Count == 0) return true;
+
+            foreach (var row in Rows)
+            {
+                if (row.IsTrue(condition)) 
+                {
+                    foreach (var sv in setValues)
+                    {
+                        row.SetValue(sv.ColumnName, sv.Value); 
+                    }
+                }
+            }
+            return true;
+
         }
 
 

@@ -50,24 +50,29 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
-           
+
+            if (condition == null) return true;
 
             ColumnDefinition c = null;
+            string rowValue = null;
 
-            foreach (var col in ColumnDefinitions)
+            // Recorremos sin usar break
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
-                if (col.Name == condition.ColumnName)
+                // Comparamos el nombre de la columna directamente
+                if (ColumnDefinitions[i].Name == condition.ColumnName)
                 {
-                    c = col;
+                    c = ColumnDefinitions[i];
+                    rowValue = Values[i];
                 }
             }
-            if (c == null)
-            {
-                return false;
-            }
-            string rowValue = GetValue(condition.ColumnName);
-           
+
+            // Si no se encontró la columna en esta fila
+            if (c == null) return false;
+
+            // Llamamos a la lógica de la condición con el valor tal cual está
             return condition.IsTrue(rowValue, c.Type);
+
 
         }
 
