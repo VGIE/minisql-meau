@@ -42,9 +42,26 @@ namespace DbManager
         public bool AddTable(Table table) // Aitana
         {
             //DEADLINE 1.B: Add a new table to the database
+
+            if (table == null)
+            {
+                return false;
+            }
+
             
-            return false;
-            
+            if (TableByName(table.Name) != null)
+            {
+                LastErrorMessage = Constants.TableAlreadyExistsError;
+                return false;
+            }
+
+            Tables.Add(table);
+
+          
+            LastErrorMessage = Constants.CreateTableSuccess;
+
+            return true;
+
         }
 
         public Table TableByName(string tableName) // Unai
