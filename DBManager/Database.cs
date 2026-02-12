@@ -92,13 +92,16 @@ namespace DbManager
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
             Table table = TableByName(tableName);
+           
             if(table==null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
+           
             Tables.Remove(table);
             LastErrorMessage = Constants.DropTableSuccess;
+            
             return true;
             
         }
@@ -107,7 +110,8 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-                    Table table = TableByName(tableName);
+            Table table = TableByName(tableName);
+            
             if (table == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
@@ -115,16 +119,14 @@ namespace DbManager
             }
 
             bool success = table.Insert(values);
+            
             if(success)
             {
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
-            }else
-            {
             }
+           
             return false;
-
-            
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition) // Endika
