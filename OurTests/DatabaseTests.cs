@@ -1,6 +1,7 @@
 using DbManager;
 using System.Collections.Generic;
 using DbManager.Parser;
+using System.Numerics;
 namespace OurTests
 {
     public class DatabaseTests
@@ -50,6 +51,37 @@ namespace OurTests
 
             Assert.NotNull(db.TableByName("PerfectTestTable"));
             Assert.Equal("Street", db.TableByName("PerfectTestTable").GetColumn(0).Name);
+        }
+
+        [Fact]
+        public void TestDeleteWhere()
+        {
+            Database db = Database.CreateTestDatabase();
+
+            Condition greaterThan20 = new("Age", ">", "20");
+            bool resultOk = db.DeleteWhere(Table.TestTableName, greaterThan20);
+
+            Assert.True(resultOk);
+            Assert.Equal(0, db.TableByName(Table.TestTableName).NumRows());
+
+            Condition condCualquiera = new("Name", "=", "Rodolfo");
+            bool tableNotFound = db.DeleteWhere("TablaImaginaria", condCualquiera);
+
+            Assert.False(tableNotFound);
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+
+            db = Database.CreateTestDatabase();
+            Condition condColInexistente = new("Peso", ">", "70");
+            bool colNotFound = db.DeleteWhere(Table.TestTableName, condColInexistente);
+
+            Assert.False(colNotFound);
+            Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+
+            db = Database.CreateTestDatabase();
+            Condition condUno = new("Name", "=", "Maider");
+            db.DeleteWhere(Table.TestTableName, condUno);
+
+            Assert.Equal(2, db.TableByName(Table.TestTableName).NumRows());
         }
 
 
