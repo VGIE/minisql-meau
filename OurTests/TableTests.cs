@@ -1,4 +1,5 @@
 using DbManager;
+using DbManager.Parser;
 
 namespace OurTests
 {
@@ -138,6 +139,42 @@ namespace OurTests
             Assert.Equal(rowCount - 1, table.NumRows());
             Assert.Equal(expectedName, table.GetRow(indexToDelete).Values[0]);
             Assert.Equal(Table.TestColumn1Row1, table.GetRow(0).Values[0]);
+        }
+
+        [Fact]
+        public void SelectTest() 
+        {
+            Table table = Table.CreateTestTable();
+
+            List<string> columnsToSelect = new List<string> { "Name", "Age" };
+
+            Table result = table.Select(columnsToSelect, null);
+
+            Assert.Equal("Result", result.Name); 
+            Assert.Equal(3, result.NumRows());   
+
+            Assert.Equal("Rodolfo", result.GetRow(0).Values[0]);
+            Assert.Equal("25", result.GetRow(0).Values[1]);
+
+            string expectedToString = "['Name','Age']{'Rodolfo','25'}{'Maider','67'}{'Pepe','51'}";
+            Assert.Equal(expectedToString, result.ToString());
+        }
+
+     
+        [Fact]
+        public void UpdateTest()
+        {
+            Table table = Table.CreateTestTable();
+            string row2value = table.GetRow(1).GetValue(Table.TestColumn3Name);
+
+            List<SetValue> changes = [new SetValue(Table.TestColumn3Name, "99")];
+            Condition cond = new(Table.TestColumn1Name, "=", Table.TestColumn1Row1);
+
+            table.Update(changes, cond);
+
+            Assert.Equal("99", table.GetRow(0).GetValue(Table.TestColumn3Name));
+
+            Assert.Equal(row2value, table.GetRow(1).GetValue(Table.TestColumn3Name));
         }
     }
 }
