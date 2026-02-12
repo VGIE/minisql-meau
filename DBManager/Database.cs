@@ -142,9 +142,41 @@ namespace DbManager
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-            
-            return false;
-            
+
+            // Check for table
+            Table selectedTable = null;
+            foreach (Table table in Tables)
+            {
+                if (table.Name == tableName)
+                {
+                    selectedTable = table;
+                    break;
+                }
+            }
+
+            if (selectedTable == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            // Check for column
+            if (selectedTable.ColumnIndexByName(columnCondition.ColumnName) == -1)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+
+            // Final removal
+            for (int i = selectedTable.NumRows() - 1; i >= 0; i--)
+            {
+                if (selectedTable.GetRow(i).IsTrue(columnCondition))
+                {
+                    selectedTable.DeleteIthRow(i);
+                }
+            }
+
+            return true;
         }
 
         public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition) // Aitana
