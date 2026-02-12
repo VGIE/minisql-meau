@@ -110,6 +110,7 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
+            
             Table table = TableByName(tableName);
             
             if (table == null)
@@ -124,9 +125,13 @@ namespace DbManager
             {
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
+            }else
+            {
+                LastErrorMessage = Constants.ColumnCountsDontMatch;
+                return false;
             }
            
-            return false;
+            
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition) // Endika
