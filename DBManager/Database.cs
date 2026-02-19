@@ -218,8 +218,32 @@ namespace DbManager
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            
-            return false;
+            try
+            {
+                Directory.CreateDirectory(databaseName);
+                foreach(Table table in Tables)
+                {
+                    string fileName = Path.Combine(databaseName, table.Name + ".tbl");
+                    using (TextWriter writer = File.CreateText(fileName))
+                    {
+                        for(int i=0; i<table.NumColumns(); i++)
+                        {
+                            writer.WriteLine(table.GetColumn(i).AsText());
+                        }
+                        writer.WriteLine("--");
+                        for (int i = 0; i < table.NumRows(); i++)
+                        {
+                            writer.WriteLine(table.GetRow(i).AsText());
+                        }
+                    }
+                }
+                SecurityManager.Save(databaseName);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
             
         }
 
@@ -229,8 +253,38 @@ namespace DbManager
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
-            
-            return null;
+            try
+            {
+                Database db = new Database(username, password);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
+                if (!Directory.Exists(path)) {
+                    return null;
+                }
+                foreach (string filePath in Directory.GetFiles(path, "*.tbl"))
+                {
+                    using (TextReader reader = File.OpenText(filePath))
+                    {
+                        List<ColumnDefinition> columns = new List<ColumnDefinition>();
+                        string line;
+                        while ((line = reader.ReadLine()) != "--")
+                        {
+                            columns.Add(ColumnDefinition.Parse(line));
+                        }
+                        string tableName = Path.GetFileNameWithoutExtension(filePath);
+                        db.CreateTable(tableName, columns);
+                        Table table = db.TableByName(tableName);
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            table.Insert(Row.Parse(columns, line).Values);
+                        }
+
+                    }
+                }
+                return db;
+            }
+            catch {
+                return null;
+            }
         }
 
         public string ExecuteMiniSQLQuery(string query)
