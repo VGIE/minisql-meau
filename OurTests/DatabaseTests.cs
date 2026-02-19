@@ -1,6 +1,7 @@
 using DbManager;
 using System.Collections.Generic;
 using DbManager.Parser;
+using System.Numerics;
 namespace OurTests
 {
     public class DatabaseTests
@@ -28,7 +29,60 @@ namespace OurTests
             Assert.Null(ghostTable);
         }
 
+        [Fact]
+        public void TestCreateTable()
+        {
+            Database db = Database.CreateTestDatabase();
 
+            List<ColumnDefinition> newCols =
+            [
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Street")
+            ];
+
+            List<ColumnDefinition> noCols = [];
+
+            bool tableAlreadyExists = db.CreateTable("TestTable", newCols);
+            bool tableHasNoCols = db.CreateTable("TestTableNoCols", noCols);
+            bool tableCreated = db.CreateTable("PerfectTestTable", newCols);
+
+            Assert.False(tableAlreadyExists);
+            Assert.False(tableHasNoCols);
+            Assert.True(tableCreated);
+
+            Assert.NotNull(db.TableByName("PerfectTestTable"));
+            Assert.Equal("Street", db.TableByName("PerfectTestTable").GetColumn(0).Name);
+        }
+
+        [Fact]
+        public void TestDeleteWhere()
+        {
+            Database db = Database.CreateTestDatabase();
+
+            Condition greaterThan20 = new("Age", ">", "20");
+            bool resultOk = db.DeleteWhere(Table.TestTableName, greaterThan20);
+
+            Assert.True(resultOk);
+            Assert.Equal(0, db.TableByName(Table.TestTableName).NumRows());
+
+            Condition condCualquiera = new("Name", "=", "Rodolfo");
+            bool tableNotFound = db.DeleteWhere("TablaImaginaria", condCualquiera);
+
+            Assert.False(tableNotFound);
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+
+            db = Database.CreateTestDatabase();
+            Condition condColInexistente = new("Peso", ">", "70");
+            bool colNotFound = db.DeleteWhere(Table.TestTableName, condColInexistente);
+
+            Assert.False(colNotFound);
+            Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+
+            db = Database.CreateTestDatabase();
+            Condition condUno = new("Name", "=", "Maider");
+            db.DeleteWhere(Table.TestTableName, condUno);
+
+            Assert.Equal(2, db.TableByName(Table.TestTableName).NumRows());
+        }
 
 
         /*DropTable - Maialen*/
@@ -68,6 +122,22 @@ namespace OurTests
 
             testDatabase.CheckForTesting(name, expectedRows);
 
+        }
+        /*Select - Endika*/
+        [Fact]
+        public void TestSelect()
+        {
+            Database testDatabase = Database.CreateTestDatabase();
+            Table result = testDatabase.Select(Table.TestTableName, null, null);
+            Assert.NotNull(result);
+            Assert.Equal(3, result.NumRows());
+            List<List<string>> expected = new ()
+            {
+                new(){Table.TestColumn1Row1, Table.TestColumn2Row1, Table.TestColumn3Row1},
+                new(){Table.TestColumn1Row2, Table.TestColumn2Row2, Table.TestColumn3Row2},
+                new(){Table.TestColumn1Row3, Table.TestColumn2Row3, Table.TestColumn3Row3 }
+            };
+            result.CheckForTesting(expected);
         }
 
         [Fact]

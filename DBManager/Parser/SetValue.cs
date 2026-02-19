@@ -11,10 +11,11 @@ namespace DbManager.Parser
         public string Value { get; private set; }
 
 
-        public SetValue(string column, string value)
+        public SetValue(string column, string value) 
         {
             //TODO DEADLINE 1A: Initialize member variables
-            
+            ColumnName = column;
+            Value = value;
         }
     }
 }
