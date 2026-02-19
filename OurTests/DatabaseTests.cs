@@ -123,6 +123,22 @@ namespace OurTests
             testDatabase.CheckForTesting(name, expectedRows);
 
         }
+        /*Select - Endika*/
+        [Fact]
+        public void TestSelect()
+        {
+            Database testDatabase = Database.CreateTestDatabase();
+            Table result = testDatabase.Select(Table.TestTableName, null, null);
+            Assert.NotNull(result);
+            Assert.Equal(3, result.NumRows());
+            List<List<string>> expected = new ()
+            {
+                new(){Table.TestColumn1Row1, Table.TestColumn2Row1, Table.TestColumn3Row1},
+                new(){Table.TestColumn1Row2, Table.TestColumn2Row2, Table.TestColumn3Row2},
+                new(){Table.TestColumn1Row3, Table.TestColumn2Row3, Table.TestColumn3Row3 }
+            };
+            result.CheckForTesting(expected);
+        }
 
         [Fact]
         public void TestInsertMultipleRows()

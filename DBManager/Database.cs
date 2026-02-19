@@ -127,6 +127,7 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
+            
             Table table = TableByName(tableName);
             
             if (table == null)
@@ -141,9 +142,13 @@ namespace DbManager
             {
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
+            }else
+            {
+                LastErrorMessage = Constants.ColumnCountsDontMatch;
+                return false;
             }
            
-            return false;
+            
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition) // Endika
@@ -151,9 +156,30 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            
-            return null;
-            
+            Table table= TableByName(tableName);
+            if (table == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return null;
+            }
+            if(columns == null || columns.Count==0)
+            {
+                columns = new List<string>();
+                for (int i=0; i<table.NumColumns(); i++)
+                {
+                    columns.Add(table.GetColumn(i).Name);
+                }
+            }
+            foreach (string col in columns)
+            {
+                if (table.ColumnIndexByName(col)==-1)
+                {
+                    LastErrorMessage=Constants.ColumnDoesNotExistError;
+                    return null;
+                }
+            }
+            Table result = table.Select(columns, condition);
+            return result;
         }
 
         public bool DeleteWhere(string tableName, Condition columnCondition) // Unai
@@ -163,15 +189,7 @@ namespace DbManager
             //If everything goes ok, return true
 
             // Check for table
-            Table selectedTable = null;
-            foreach (Table table in Tables)
-            {
-                if (table.Name == tableName)
-                {
-                    selectedTable = table;
-                    break;
-                }
-            }
+            Table selectedTable = TableByName(tableName);
 
             if (selectedTable == null)
             {
@@ -285,7 +303,7 @@ namespace DbManager
     }
 }
 
-
+    
 
 
 

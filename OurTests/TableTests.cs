@@ -99,8 +99,6 @@ namespace OurTests
             string expected = "['Name','Height','Age']{'Rodolfo','1.62','25'}{'Maider','1.67','67'}{'Pepe','1.55','51'}";
             Assert.Equal(expected, table.ToString());
 
-
-
             Table tableEmpty = new Table("Empty", new List<ColumnDefinition>());
             Assert.Equal("", tableEmpty.ToString());
 
@@ -123,6 +121,7 @@ namespace OurTests
 
             Assert.False(table.Insert(new List<string> { "Error" }));
             Assert.Equal(4, table.NumRows());
+
         }
 
         [Fact]
@@ -175,6 +174,17 @@ namespace OurTests
             Assert.Equal("99", table.GetRow(0).GetValue(Table.TestColumn3Name));
 
             Assert.Equal(row2value, table.GetRow(1).GetValue(Table.TestColumn3Name));
+        }
+        
+
+        [Fact]
+        public void TestDeleteWhere()
+        {
+            Table table = Table.CreateTestTable();
+            int initialRows =table.NumRows();
+            table.DeleteWhere(new Condition("Age", "=", "67"));
+            Assert.Equal(2, table.NumRows());
+            Assert.Equal(initialRows -1, table.NumRows());
         }
     }
 }

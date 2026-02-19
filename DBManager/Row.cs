@@ -105,6 +105,7 @@ namespace DbManager
             
         }
 
+
         public string AsText() // Unai
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
