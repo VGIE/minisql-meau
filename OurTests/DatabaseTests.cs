@@ -181,6 +181,27 @@ namespace OurTests
             Assert.Equal(Constants.TableAlreadyExistsError, db.LastErrorMessage);
         }
 
+        [Fact]
+        public void TestUpdate()
+        {
+            Database db = Database.CreateTestDatabase();
+            string tableName = Table.TestTableName;
+
+            List<SetValue> changes = new List<SetValue>
+    {
+        new SetValue(Table.TestColumn3Name, "99")
+    };
+
+            Condition cond = new Condition(Table.TestColumn1Name, "=", Table.TestColumn1Row1);
+
+            bool result = db.Update(tableName, changes, cond);
+
+            Assert.True(result);
+
+            Assert.Equal("99", db.TableByName(tableName)  .GetRow(0)  .GetValue(Table.TestColumn3Name));
+
+            Assert.Equal(Table.TestColumn3Row2,  db.TableByName(tableName) .GetRow(1) .GetValue(Table.TestColumn3Name));
+        }
 
 
     }
