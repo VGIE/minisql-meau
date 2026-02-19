@@ -42,9 +42,26 @@ namespace DbManager
         public bool AddTable(Table table) // Aitana
         {
             //DEADLINE 1.B: Add a new table to the database
+
+            if (table == null)
+            {
+                return false;
+            }
+
             
-            return false;
-            
+            if (TableByName(table.Name) != null)
+            {
+                LastErrorMessage = Constants.TableAlreadyExistsError;
+                return false;
+            }
+
+            Tables.Add(table);
+
+          
+            LastErrorMessage = Constants.CreateTableSuccess;
+
+            return true;
+
         }
 
         public Table TableByName(string tableName) // Unai
@@ -204,9 +221,25 @@ namespace DbManager
             //DEADLINE 1.B: Update in the given table all the rows where the condition is true using the SetValues
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
+
+            Table table = TableByName(tableName);
+            if (table == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            if (columnCondition == null ||
+                table.ColumnIndexByName(columnCondition.ColumnName) == -1)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+
             
-            return false;
-            
+            table.Update(columnNames, columnCondition);
+
+            return true;
         }
 
         

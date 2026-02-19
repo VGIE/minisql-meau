@@ -188,6 +188,14 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
 
+            if (columnNames == null || columnNames.Count == 0)
+            {
+                columnNames = new List<string>();
+                foreach (var col in ColumnDefinitions)
+                {
+                    columnNames.Add(col.Name);
+                }
+            }
 
             List<ColumnDefinition> selectedColumns = new List<ColumnDefinition>();
             foreach (string name in columnNames)
@@ -216,7 +224,6 @@ namespace DbManager
                         }
                     }
 
-                  
                     Row newRow = new Row(selectedColumns, selectedValues);
                     result.AddRow(newRow);
                 }
