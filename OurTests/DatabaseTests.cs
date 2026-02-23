@@ -188,9 +188,9 @@ namespace OurTests
             string tableName = Table.TestTableName;
 
             List<SetValue> changes = new List<SetValue>
-    {
-        new SetValue(Table.TestColumn3Name, "99")
-    };
+            {
+                new SetValue(Table.TestColumn3Name, "99")
+            };
 
             Condition cond = new Condition(Table.TestColumn1Name, "=", Table.TestColumn1Row1);
 

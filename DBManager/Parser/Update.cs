@@ -5,6 +5,7 @@ namespace DbManager
 {
     public class Update: MiniSqlQuery
     {
+        // Endika
         public string Table { get; private set; }
         public List<SetValue> Columns { get; private set; }
         public Condition Where { get; private set; }

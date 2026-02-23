@@ -6,6 +6,7 @@ using DbManager.Parser;
 namespace DbManager
 {
  
+    // Aitana
     public class Revoke : MiniSqlQuery
     {
         public string PrivilegeName { get; set; }

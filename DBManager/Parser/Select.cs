@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DbManager 
 {
+    // Maialen
     public class Select: MiniSqlQuery
     {
         public string Table { get; private set; }

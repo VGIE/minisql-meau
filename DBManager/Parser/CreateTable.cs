@@ -5,7 +5,8 @@ using DbManager.Parser;
 
 namespace DbManager
 {
- 
+    
+    // Maialen
     public class CreateTable : MiniSqlQuery
     {
         public string Table { get; private set; }

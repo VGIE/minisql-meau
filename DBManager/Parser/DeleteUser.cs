@@ -6,6 +6,7 @@ using DbManager.Parser;
 namespace DbManager
 {
  
+    // Unai
     public class DeleteUser : MiniSqlQuery
     {
         public string Username { get; private set; }

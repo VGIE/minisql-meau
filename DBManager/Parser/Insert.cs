@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DbManager
 {
+    // Unai
     public class Insert: MiniSqlQuery
     {
         public string Table { get; private set; }

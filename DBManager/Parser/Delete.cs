@@ -4,6 +4,7 @@ using System.Text;
 
 namespace DbManager.Parser
 {
+    // Endika
     public class Delete : MiniSqlQuery
     {
         public string Table { get; private set; }

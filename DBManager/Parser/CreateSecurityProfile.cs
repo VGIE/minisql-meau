@@ -5,7 +5,8 @@ using DbManager.Parser;
 
 namespace DbManager
 {
- 
+    
+    // Aitana
     public class CreateSecurityProfile : MiniSqlQuery
     {
         public string ProfileName { get; set; }

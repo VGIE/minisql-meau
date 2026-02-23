@@ -6,6 +6,7 @@ namespace DbManager
 {
     public class MiniSQLParser
     {
+        // Unai
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2

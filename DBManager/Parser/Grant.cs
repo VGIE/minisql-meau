@@ -6,6 +6,7 @@ using DbManager.Parser;
 namespace DbManager
 {
  
+    // Endika
     public class Grant : MiniSqlQuery
     {
         public string PrivilegeName { get; set; }
