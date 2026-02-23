@@ -16,7 +16,9 @@ namespace DbManager
         public AddUser(string username, string password, string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
-            
+            this.Username = username;
+            this.Password = password;
+            this.ProfileName = profileName;
         }
         public string Execute(Database database)
         {
