@@ -242,6 +242,10 @@ namespace DbManager
             return true;
         }
 
+        private const string tbl=".tbl";
+        private const string Delimiter = "--";
+
+        
         public bool Save(string databaseName) // Endika
         {
             //DEADLINE 1.C: Save this database to disk with the given name
@@ -249,17 +253,18 @@ namespace DbManager
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
             try
             {
+                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
                 Directory.CreateDirectory(databaseName);
-                foreach(Table table in Tables)
+                foreach (Table table in Tables)
                 {
-                    string fileName = Path.Combine(databaseName, table.Name + ".tbl");
+                    string fileName = Path.Combine(path, table.Name + tbl);
                     using (TextWriter writer = File.CreateText(fileName))
                     {
-                        for(int i=0; i<table.NumColumns(); i++)
+                        for (int i = 0; i < table.NumColumns(); i++)
                         {
                             writer.WriteLine(table.GetColumn(i).AsText());
                         }
-                        writer.WriteLine("--");
+                        writer.WriteLine(Delimiter);
                         for (int i = 0; i < table.NumRows(); i++)
                         {
                             writer.WriteLine(table.GetRow(i).AsText());
@@ -269,9 +274,12 @@ namespace DbManager
                 SecurityManager.Save(databaseName);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                {
+                    LastErrorMessage = Constants.Error + ex.Message;
+                    return false;
+                }
             }
             
         }
@@ -289,29 +297,53 @@ namespace DbManager
                 if (!Directory.Exists(path)) {
                     return null;
                 }
-                foreach (string filePath in Directory.GetFiles(path, "*.tbl"))
+                foreach (var filePath in Directory.GetFiles(path, "*"+tbl))
                 {
                     using (TextReader reader = File.OpenText(filePath))
                     {
                         List<ColumnDefinition> columns = new List<ColumnDefinition>();
                         string line;
-                        while ((line = reader.ReadLine()) != "--")
+                        while ((line = reader.ReadLine()) != Delimiter)
                         {
-                            columns.Add(ColumnDefinition.Parse(line));
+                            ColumnDefinition col=ColumnDefinition.Parse(line);
+
+                            if (columns != null)
+                            {
+                                columns.Add(col);
+                            }
+                            else { 
+                                db.LastErrorMessage=Constants.SyntaxError;
+                                return null;
+                            }
                         }
                         string tableName = Path.GetFileNameWithoutExtension(filePath);
                         db.CreateTable(tableName, columns);
                         Table table = db.TableByName(tableName);
+                        if (table == null)
+                        {
+                            db.LastErrorMessage=Constants.TableDoesNotExistError;
+                            return null;
+                        }
                         while ((line = reader.ReadLine()) != null)
                         {
-                            table.Insert(Row.Parse(columns, line).Values);
+                            Row row=Row.Parse(columns, line);
+                            db.TableByName(tableName).Insert(row.Values);
                         }
 
                     }
                 }
-                return db;
+                db.SecurityManager = Manager.Load(databaseName, username);
+                if(db.SecurityManager.IsPasswordCorrect(username, password))
+                {
+                    return db;
+                }
+                else {  
+                    return null; 
+                }
             }
-            catch {
+            catch(Exception ex) {
+                Database db=new Database(username, password);
+                db.LastErrorMessage = ex.Message;
                 return null;
             }
         }
