@@ -15,6 +15,8 @@ namespace DbManager
         public CreateTable(string table, List<ColumnDefinition> columns)
         {
             //TODO DEADLINE 2: Initialize member variables
+            this.Table= table;
+            this.ColumnsParameters=columns;
             
         }
         public string Execute(Database database)
@@ -22,8 +24,20 @@ namespace DbManager
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //CreateTableSuccess or the last error in the database
             
-            return null;
+            if(database== null) 
+            return Constants.Error;
+            Table tabla = database.TableByName(Table);
+           
+            if(tabla!=null) 
+            return Constants.TableAlreadyExistsError;
             
+            if(ColumnsParameters==null||ColumnsParameters.Count==0) 
+            return Constants.DatabaseCreatedWithoutColumnsError;
+            
+            if(database.CreateTable(Table,ColumnsParameters))
+            return Constants.CreateTableSuccess;
+            
+            return Constants.Error;
         }
 
     }
