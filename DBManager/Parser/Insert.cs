@@ -14,16 +14,21 @@ namespace DbManager
         public Insert(string table, List<string> values)
         {
             //TODO DEADLINE 2: Initialize member variables
-            
+            this.Table = table;
+            this.Values = values;
         }
 
         public string Execute(Database database)
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //InsertSuccess or the last error in the database
-            
-            return null;
-            
+
+            if (database == null)
+                return Constants.Error;
+
+            database.Insert(Table, Values);
+
+            return database.LastErrorMessage;
         }
     }
 }
