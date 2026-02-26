@@ -262,24 +262,21 @@ namespace DbManager
                     {
                         for (int i = 0; i < table.NumColumns(); i++)
                         {
-                            writer.WriteLine(table.GetColumn(i).AsText());
+                            writer.WriteLine(table.GetColumn(i).AsText().Replace("->", "\\->"));
                         }
                         writer.WriteLine(Delimiter);
                         for (int i = 0; i < table.NumRows(); i++)
                         {
-                            writer.WriteLine(table.GetRow(i).AsText());
+                            writer.WriteLine(table.GetRow(i).AsText().Replace(":", "\\:"));
                         }
                     }
                 }
-                SecurityManager.Save(databaseName);
                 return true;
             }
             catch (Exception ex)
             {
-                {
                     LastErrorMessage = Constants.Error + ex.Message;
                     return false;
-                }
             }
             
         }
@@ -305,7 +302,7 @@ namespace DbManager
                         string line;
                         while ((line = reader.ReadLine()) != Delimiter)
                         {
-                            ColumnDefinition col=ColumnDefinition.Parse(line);
+                            ColumnDefinition col=ColumnDefinition.Parse(line.Replace("\\->", "->"));
 
                             if (columns != null)
                             {
@@ -326,20 +323,14 @@ namespace DbManager
                         }
                         while ((line = reader.ReadLine()) != null)
                         {
-                            Row row=Row.Parse(columns, line);
+                            Row row=Row.Parse(columns, line.Replace("\\:", ":"));
                             db.TableByName(tableName).Insert(row.Values);
                         }
 
                     }
                 }
-                db.SecurityManager = Manager.Load(databaseName, username);
-                if(db.SecurityManager.IsPasswordCorrect(username, password))
-                {
+                
                     return db;
-                }
-                else {  
-                    return null; 
-                }
             }
             catch(Exception ex) {
                 Database db=new Database(username, password);
