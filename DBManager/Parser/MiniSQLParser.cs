@@ -10,15 +10,15 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null;
+            const string selectPattern = @"SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*;";
             
-            const string insertPattern = null;
+            const string insertPattern = @"INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>.*)\)\s*;";
             
-            const string dropTablePattern = null;
+            const string dropTablePattern = @"DROP\s+TABLE\s+(?<table>\w+)\s*;";
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
+            const string createTablePattern = @"CREATE\s+TABLE\s+";
             
             const string updateTablePattern = null;
             
