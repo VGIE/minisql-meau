@@ -42,9 +42,26 @@ namespace DbManager
         public bool AddTable(Table table) // Aitana
         {
             //DEADLINE 1.B: Add a new table to the database
+
+            if (table == null)
+            {
+                return false;
+            }
+
             
-            return false;
-            
+            if (TableByName(table.Name) != null)
+            {
+                LastErrorMessage = Constants.TableAlreadyExistsError;
+                return false;
+            }
+
+            Tables.Add(table);
+
+          
+            LastErrorMessage = Constants.CreateTableSuccess;
+
+            return true;
+
         }
 
         public Table TableByName(string tableName) // Unai
@@ -66,9 +83,25 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
-            
+            if (TableByName(tableName) != null)
+            {
+                LastErrorMessage = Constants.TableAlreadyExistsError;
+                return false;
+            }
+
+            if (ColumnDefinition.Count == 0)
+            {
+                LastErrorMessage = Constants.DatabaseCreatedWithoutColumnsError;
+                return false;
+            }
+
+            Table newTable = new(tableName, ColumnDefinition);
+            Tables.Add(newTable);
+
+            LastErrorMessage = Constants.CreateTableSuccess;
+            return true;
+
+
         }
 
         public bool DropTable(string tableName) // Maialen
@@ -109,7 +142,8 @@ namespace DbManager
             {
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
-            }else
+            }
+            else
             {
                 LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
@@ -123,9 +157,30 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            
-            return null;
-            
+            Table table= TableByName(tableName);
+            if (table == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return null;
+            }
+            if(columns == null || columns.Count==0)
+            {
+                columns = new List<string>();
+                for (int i=0; i<table.NumColumns(); i++)
+                {
+                    columns.Add(table.GetColumn(i).Name);
+                }
+            }
+            foreach (string col in columns)
+            {
+                if (table.ColumnIndexByName(col)==-1)
+                {
+                    LastErrorMessage=Constants.ColumnDoesNotExistError;
+                    return null;
+                }
+            }
+            Table result = table.Select(columns, condition);
+            return result;
         }
 
         public bool DeleteWhere(string tableName, Condition columnCondition) // Unai
@@ -133,9 +188,33 @@ namespace DbManager
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-            
-            return false;
-            
+
+            // Check for table
+            Table selectedTable = TableByName(tableName);
+
+            if (selectedTable == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            // Check for column
+            if (selectedTable.ColumnIndexByName(columnCondition.ColumnName) == -1)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+
+            // Final removal
+            for (int i = selectedTable.NumRows() - 1; i >= 0; i--)
+            {
+                if (selectedTable.GetRow(i).IsTrue(columnCondition))
+                {
+                    selectedTable.DeleteIthRow(i);
+                }
+            }
+
+            return true;
         }
 
         public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition) // Aitana
@@ -143,22 +222,58 @@ namespace DbManager
             //DEADLINE 1.B: Update in the given table all the rows where the condition is true using the SetValues
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
+
+            Table table = TableByName(tableName);
+            if (table == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            if (columnCondition == null ||
+                table.ColumnIndexByName(columnCondition.ColumnName) == -1)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
+            }
+
             
-            return false;
-            
+            table.Update(columnNames, columnCondition);
+
+            return true;
         }
 
-        
-        
-
-        
         public bool Save(string databaseName) // Endika
         {
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            
-            return false;
+            try
+            {
+                Directory.CreateDirectory(databaseName);
+                foreach(Table table in Tables)
+                {
+                    string fileName = Path.Combine(databaseName, table.Name + ".tbl");
+                    using (TextWriter writer = File.CreateText(fileName))
+                    {
+                        for(int i=0; i<table.NumColumns(); i++)
+                        {
+                            writer.WriteLine(table.GetColumn(i).AsText());
+                        }
+                        writer.WriteLine("--");
+                        for (int i = 0; i < table.NumRows(); i++)
+                        {
+                            writer.WriteLine(table.GetRow(i).AsText());
+                        }
+                    }
+                }
+                SecurityManager.Save(databaseName);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
             
         }
 
@@ -168,8 +283,38 @@ namespace DbManager
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
-            
-            return null;
+            try
+            {
+                Database db = new Database(username, password);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
+                if (!Directory.Exists(path)) {
+                    return null;
+                }
+                foreach (string filePath in Directory.GetFiles(path, "*.tbl"))
+                {
+                    using (TextReader reader = File.OpenText(filePath))
+                    {
+                        List<ColumnDefinition> columns = new List<ColumnDefinition>();
+                        string line;
+                        while ((line = reader.ReadLine()) != "--")
+                        {
+                            columns.Add(ColumnDefinition.Parse(line));
+                        }
+                        string tableName = Path.GetFileNameWithoutExtension(filePath);
+                        db.CreateTable(tableName, columns);
+                        Table table = db.TableByName(tableName);
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            table.Insert(Row.Parse(columns, line).Values);
+                        }
+
+                    }
+                }
+                return db;
+            }
+            catch {
+                return null;
+            }
         }
 
         public string ExecuteMiniSQLQuery(string query)
@@ -225,7 +370,7 @@ namespace DbManager
     }
 }
 
-
+    
 
 
 
