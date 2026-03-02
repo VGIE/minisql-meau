@@ -10,29 +10,29 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*;";
+            const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
-            const string insertPattern = @"INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>.*)\)\s*;";
+            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>.*)\)\s*$";
             
-            const string dropTablePattern = @"DROP\s+TABLE\s+(?<table>\w+)\s*;";
+            const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"CREATE\s+TABLE\s+";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+\w+(?:\s*,\s*\w+\s+\w+)*)\s*\)\s*$";
             
-            const string updateTablePattern = null;
+            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>.+?)\s+WHERE\s+(?<condition>.+)\s*$";
             
-            const string deletePattern = null;
+            const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>.+)\s*$";
             
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = null;
+            const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+(?<secprofile>[a-zA-Z]+)\s*$";
             
-            const string dropSecurityProfilePattern = null;
+            const string dropSecurityProfilePattern = @"^DROP\s+SECURITY\s+PROFILE\s+(?<secprofile>[a-zA-Z]+)\s*$";
+
+            const string grantPattern = @"^GRANT\s+(?<privilege>DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(?<table>\w+)\s+TO\s+(?<secprofile>[a-zA-Z]+)\s*$";
             
-            const string grantPattern = null;
-            
-            const string revokePattern = null;
+            const string revokePattern = @"^REVOKE\s+(?<>)$";
             
             const string addUserPattern = null;
             
