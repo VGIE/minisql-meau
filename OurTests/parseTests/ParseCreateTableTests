@@ -28,7 +28,65 @@ namespace OurTests
             Table existingTable = new Table("ExistingTable", defaultColumns);
             db.AddTable(existingTable);
         }
+        [Fact]
+        public void ReturnsErrorDBNull()
+        {
+            CreateTable query = new CreateTable("NewTable", defaultColumns);
+            Assert.Equal(Constants.Error, query.Execute(null));
+        }
 
+        [Fact]
         
+        public void ReturnExists()
+        {
+            CreateTable query = new CreateTable("ExistingTable", defaultColumns);
+            Assert.Equal(Constants.TableAlreadyExistsError, query.Execute(db));  
+        }
+
+        [Fact]
+        public void ReturnsDBWhithoutC()
+        {
+            CreateTable query = new CreateTable("EmptyTable", new List<ColumnDefinition>());
+            Assert.Equal(Constants.DatabaseCreatedWithoutColumnsError, query.Execute(db));
+        }
+
+        [Fact]
+        public void ReturnsSuccess()
+        {
+            string tableName = "Students";
+            CreateTable query = new CreateTable(tableName, defaultColumns);
+
+            string result = query.Execute(db);
+
+            Assert.Equal(Constants.CreateTableSuccess, result); 
+            Assert.NotNull(db.TableByName(tableName));
+        }
+
+        [Fact]
+        public void IdCreateTable()
+        {
+            string sql = "CREATE   TABLE    TestTable   (ID INT)";
+            
+            var query = MiniSQLParser.Parse(sql);
+
+            Assert.NotNull(query);
+            Assert.IsType<CreateTable>(query);
+            
+            CreateTable ct = (CreateTable)query;
+            Assert.Equal("TestTable", ct.Table);
+        }
+
+        [Fact]
+        public void ReturnsNull()
+        {
+            string sql = "CREATE TABLE ErrorTable (Name FLOAT)"; 
+            var query = MiniSQLParser.Parse(sql);
+            
+            Assert.Null(query);
+        }
+
+    
     }
+
+    
 }
