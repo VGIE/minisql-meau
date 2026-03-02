@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using DbManager;
 
 namespace OurTests
@@ -5,11 +6,27 @@ namespace OurTests
     public class ParseCreateTableTests
     {
         //TODO DEADLINE 1A : Create your own tests for Table
+        private Database db;
+        private List<ColumnDefinition> dColumns;
         
-        [Fact]
+       
         public void Test2()
         {
+            PrepareDatabaseC();
+        }
 
+        public void PrepareDatabaseC()
+        {
+            db= new Database("admin","1234");
+
+            dColumns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
+            };
+
+            Table existingTable = new Table("ExistingTable", defaultColumns);
+            db.AddTable(existingTable);
         }
 
         
