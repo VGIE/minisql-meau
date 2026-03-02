@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using DbManager;
+using Xunit;
 
 namespace OurTests
 {
@@ -9,29 +11,25 @@ namespace OurTests
         private Database db;
         private List<ColumnDefinition> dColumns;
         
-       
-        public void Test2()
-        {
-            PrepareDatabaseC();
-        }
-
-        public void PrepareDatabaseC()
+        public ParseCreateTableTests()
         {
             db= new Database("admin","1234");
-
             dColumns = new List<ColumnDefinition>
             {
                 new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
                 new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
             };
 
-            Table existingTable = new Table("ExistingTable", defaultColumns);
+            Table existingTable = new Table("ExistingTable", dColumns);
             db.AddTable(existingTable);
         }
+       
+       
+        
         [Fact]
         public void ReturnsErrorDBNull()
         {
-            CreateTable query = new CreateTable("NewTable", defaultColumns);
+            CreateTable query = new CreateTable("NewTable", dColumns);
             Assert.Equal(Constants.Error, query.Execute(null));
         }
 
@@ -39,8 +37,9 @@ namespace OurTests
         
         public void ReturnExists()
         {
-            CreateTable query = new CreateTable("ExistingTable", defaultColumns);
-            Assert.Equal(Constants.TableAlreadyExistsError, query.Execute(db));  
+            CreateTable query = new CreateTable("ExistingTable", dColumns);
+            string result = query.Execute(db);
+            Assert.Equal(Constants.TableAlreadyExistsError, result);     
         }
 
         [Fact]
@@ -54,7 +53,7 @@ namespace OurTests
         public void ReturnsSuccess()
         {
             string tableName = "Students";
-            CreateTable query = new CreateTable(tableName, defaultColumns);
+            CreateTable query = new CreateTable(tableName, dColumns);
 
             string result = query.Execute(db);
 
