@@ -142,7 +142,8 @@ namespace DbManager
             {
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
-            }else
+            }
+            else
             {
                 LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
