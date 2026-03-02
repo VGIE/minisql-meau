@@ -12,15 +12,15 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
-            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>[^,)]+(?:\s*,\s*[^,)]+)*)\)\s*$";
+            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>'[^']*'(?:,\s*'[^']*')*)\)\s*$";
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+\w+(?:\s*,\s*\w+\s+\w+)*)\s*\)\s*$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+\w+(?:,\w+\s+\w+)*)\s*\)\s*$";
             
-            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>.+?)\s+WHERE\s+(?<condition>.+)\s*$";
+            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|[^,\s]+)(?:,\s*\w+\s*=\s*(?:'[^']*'|[^,\s]+))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
             const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>.+)\s*$";
             
@@ -34,10 +34,10 @@ namespace DbManager
             
             const string revokePattern = @"^REVOKE\s+(?<privilege>DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(?<table>\w+)\s+TO\s+(?<secprofile>[a-zA-Z]+)\s*$";
             
-            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)\s*,\s*(?<password>[^,]+)\s*,\s*(?<secprofile>[a-zA-Z]+)\)\s*$";
+            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+),(?<password>[^,]+),(?<secprofile>[a-zA-Z]+)\)\s*$";
             
             const string deleteUserPattern = @"^DELETE\s+USER\s+(?<user>[a-zA-Z]+)\s*$";
-            
+
 
             //TODO DEADLINE 2
             //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
@@ -47,7 +47,20 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            
+            const string conditionPattern = @"^(?<colname>)(?<operator>)$";
+
+            Match selectMatch = Regex.Match(miniSQLQuery, selectPattern);
+            if (selectMatch.Success)
+            {
+                string table = selectMatch.Groups["table"].Value;
+                string columnsString = selectMatch.Groups["columns"].Value;
+                List<string> columns = CommaSeparatedNames(columnsString);
+                string conditionString = selectMatch.Groups["condition"].Value;
+                
+
+                return new Select(table, columns, null);
+            }
+
             return null;
            
         }
