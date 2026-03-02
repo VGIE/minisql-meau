@@ -12,7 +12,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
-            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>.*)\)\s*$";
+            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>[^,)]+(?:\s*,\s*[^,)]+)*)\)\s*$";
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
             
@@ -32,11 +32,11 @@ namespace DbManager
 
             const string grantPattern = @"^GRANT\s+(?<privilege>DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(?<table>\w+)\s+TO\s+(?<secprofile>[a-zA-Z]+)\s*$";
             
-            const string revokePattern = @"^REVOKE\s+(?<>)$";
+            const string revokePattern = @"^REVOKE\s+(?<privilege>DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(?<table>\w+)\s+TO\s+(?<secprofile>[a-zA-Z]+)\s*$";
             
-            const string addUserPattern = null;
+            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)\s*,\s*(?<password>[^,]+)\s*,\s*(?<secprofile>[a-zA-Z]+)\)\s*$";
             
-            const string deleteUserPattern = null;
+            const string deleteUserPattern = @"^DELETE\s+USER\s+(?<user>[a-zA-Z]+)\s*$";
             
 
             //TODO DEADLINE 2
