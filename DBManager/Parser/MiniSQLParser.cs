@@ -47,19 +47,36 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            const string conditionPattern = @"^(?<colname>)(?<operator>)$";
+            const string conditionPattern = @"^(?<colname>.*)\s*(?<operator>[<> =])\s*(?<value>.+)$";
+            
 
             Match selectMatch = Regex.Match(miniSQLQuery, selectPattern);
             if (selectMatch.Success)
             {
                 string table = selectMatch.Groups["table"].Value;
-                string columnsString = selectMatch.Groups["columns"].Value;
-                List<string> columns = CommaSeparatedNames(columnsString);
-                string conditionString = selectMatch.Groups["condition"].Value;
-                
 
-                return new Select(table, columns, null);
+                List<string> columns = CommaSeparatedNames(selectMatch.Groups["columns"].Value);
+
+                string conditionString = selectMatch.Groups["condition"].Value;
+                Condition condition = null;
+
+                if (!string.IsNullOrEmpty(conditionString))
+                {
+                    Match conditionMatch = Regex.Match(conditionString, conditionPattern);
+
+                    if (conditionMatch.Success)
+                    {
+                        string colname = conditionMatch.Groups["colname"].Value;
+                        string operatorString = conditionMatch.Groups["operator"].Value;
+                        string valueString = conditionMatch.Groups["value"].Value;
+
+                        condition = new Condition(colname, operatorString, valueString);
+                    }
+                }
+
+                return new Select(table, columns, condition);
             }
+
 
             return null;
            
