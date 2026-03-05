@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,9 @@ namespace DbManager
         public Select(string table, List<string> columns, Condition condition=null)
         {
             //TODO DEADLINE 2: Initialize member variables
-            
+            this.Table = table;
+            this.Columns = columns ?? new List<string> ();
+            this.Where = condition;
         }
 
         public string Execute(Database database)
