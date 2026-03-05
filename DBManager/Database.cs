@@ -263,15 +263,16 @@ namespace DbManager
                     {
                         for (int i = 0; i < table.NumColumns(); i++)
                         {
-                            writer.WriteLine(table.GetColumn(i).AsText().Replace("->", "\\->"));
+                            writer.WriteLine(table.GetColumn(i).AsText());
                         }
                         writer.WriteLine(Delimiter);
                         for (int i = 0; i < table.NumRows(); i++)
                         {
-                            writer.WriteLine(table.GetRow(i).AsText().Replace(":", "\\:"));
+                            writer.WriteLine(table.GetRow(i).AsText());
                         }
                     }
                 }
+                SecurityManager.Save(Path.Combine(path, "security.dat"));
                 return true;
             }
             catch (Exception ex)
@@ -290,7 +291,8 @@ namespace DbManager
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
             try
             {
-                Database db = new Database(username, password);
+                Database db = new Database();
+                db.m_username = username;
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
                 if (!Directory.Exists(path)) 
                 {
@@ -304,16 +306,7 @@ namespace DbManager
                         string line;
                         while ((line = reader.ReadLine()) != Delimiter)
                         {
-                            ColumnDefinition col=ColumnDefinition.Parse(line.Replace("\\->", "->"));
-
-                            if (columns != null)
-                            {
-                                columns.Add(col);
-                            }
-                            else { 
-                                db.LastErrorMessage=Constants.SyntaxError;
-                                return null;
-                            }
+                            columns.Add(ColumnDefinition.Parse(line));
                         }
                         string tableName = Path.GetFileNameWithoutExtension(filePath);
                         db.CreateTable(tableName, columns);
@@ -325,19 +318,22 @@ namespace DbManager
                         }
                         while ((line = reader.ReadLine()) != null)
                         {
-                            Row row=Row.Parse(columns, line.Replace("\\:", ":"));
+                            Row row=Row.Parse(columns, line);
                             db.TableByName(tableName).Insert(row.Values);
                         }
 
                     }
                 }
-                
-                    return db;
+                string secFile = Path.Combine(path, "security.dat");
+                db.SecurityManager = Manager.Load(secFile, username);
+                if(!db.SecurityManager.IsPasswordCorrect(username, password))
+                {
+                    return null;
+                }
+                return db;
             }
             catch(Exception ex) 
             {
-                Database db=new Database(username, password);
-                db.LastErrorMessage = ex.Message;
                 return null;
             }
         }
@@ -394,7 +390,7 @@ namespace DbManager
         }
     }
 }
-
+    
     
 
 
