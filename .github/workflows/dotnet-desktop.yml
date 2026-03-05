@@ -38,7 +38,7 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Build project
-      uses: dotnet build
+      run: dotnet build
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
