@@ -292,7 +292,8 @@ namespace DbManager
             {
                 Database db = new Database(username, password);
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                if (!Directory.Exists(path)) {
+                if (!Directory.Exists(path)) 
+                {
                     return null;
                 }
                 foreach (var filePath in Directory.GetFiles(path, "*"+tbl))
@@ -333,7 +334,8 @@ namespace DbManager
                 
                     return db;
             }
-            catch(Exception ex) {
+            catch(Exception ex) 
+            {
                 Database db=new Database(username, password);
                 db.LastErrorMessage = ex.Message;
                 return null;
