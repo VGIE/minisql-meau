@@ -47,7 +47,8 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            const string conditionPattern = @"^(?<colname>.*)\s*(?<operator>[<> =])\s*(?<value>.+)$";
+            const string conditionPattern = @"^(?<colname>.+)\s*(?<operator>[<> =])\s*(?<value>.+)\s*$";
+            const string columnDefinitionPattern = @"^(?<colname>.+)\s*(?<type>String|Int|Double)\s*&";
             
 
             Match selectMatch = Regex.Match(miniSQLQuery, selectPattern);
@@ -77,6 +78,33 @@ namespace DbManager
                 return new Select(table, columns, condition);
             }
 
+            Match insertMatch = Regex.Match(miniSQLQuery, insertPattern);
+            if (insertMatch.Success)
+            {
+                string tableString = insertMatch.Groups["table"].Value;
+                List<string> values = CommaSeparatedNames(insertMatch.Groups["values"].Value);
+
+                return new Insert(tableString, values);
+            }
+
+            Match dropTableMatch = Regex.Match(miniSQLQuery, dropTablePattern);
+            if (dropTableMatch.Success)
+            {
+                string tableString = dropTableMatch.Groups["table"].Value;
+
+                return new DropTable(tableString);
+            }
+
+
+
+            Match createTableMatch = Regex.Match(miniSQLQuery, createTablePattern);
+            if (createTableMatch.Success)
+            {
+                string tableString = createTableMatch.Groups["table"].Value;
+                List<string> columnsString = CommaSeparatedNames(createTableMatch.Groups["columns"].Value);
+
+
+            }
 
             return null;
            
