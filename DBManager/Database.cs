@@ -255,7 +255,7 @@ namespace DbManager
             try
             {
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                Directory.CreateDirectory(databaseName);
+                Directory.CreateDirectory(path);
                 foreach (Table table in Tables)
                 {
                     string fileName = Path.Combine(path, table.Name + tbl);
@@ -263,15 +263,16 @@ namespace DbManager
                     {
                         for (int i = 0; i < table.NumColumns(); i++)
                         {
-                            writer.WriteLine(table.GetColumn(i).AsText().Replace("->", "\\->"));
+                            writer.WriteLine(table.GetColumn(i).AsText());
                         }
                         writer.WriteLine(Delimiter);
                         for (int i = 0; i < table.NumRows(); i++)
                         {
-                            writer.WriteLine(table.GetRow(i).AsText().Replace(":", "\\:"));
+                            writer.WriteLine(table.GetRow(i).AsText());
                         }
                     }
                 }
+                SecurityManager.Save(Path.Combine(path, "security.dat"));
                 return true;
             }
             catch (Exception ex)
@@ -290,9 +291,11 @@ namespace DbManager
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
             try
             {
-                Database db = new Database(username, password);
+                Database db = new Database();
+                db.m_username = username;
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                if (!Directory.Exists(path)) {
+                if (!Directory.Exists(path)) 
+                {
                     return null;
                 }
                 foreach (var filePath in Directory.GetFiles(path, "*"+tbl))
@@ -301,18 +304,9 @@ namespace DbManager
                     {
                         List<ColumnDefinition> columns = new List<ColumnDefinition>();
                         string line;
-                        while ((line = reader.ReadLine()) != Delimiter)
+                        while ((line = reader.ReadLine()) != null&&line!=Delimiter)
                         {
-                            ColumnDefinition col=ColumnDefinition.Parse(line.Replace("\\->", "->"));
-
-                            if (columns != null)
-                            {
-                                columns.Add(col);
-                            }
-                            else { 
-                                db.LastErrorMessage=Constants.SyntaxError;
-                                return null;
-                            }
+                            columns.Add(ColumnDefinition.Parse(line));
                         }
                         string tableName = Path.GetFileNameWithoutExtension(filePath);
                         db.CreateTable(tableName, columns);
@@ -322,20 +316,31 @@ namespace DbManager
                             db.LastErrorMessage=Constants.TableDoesNotExistError;
                             return null;
                         }
-                        while ((line = reader.ReadLine()) != null)
+                        if (line==Delimiter)
                         {
-                            Row row=Row.Parse(columns, line.Replace("\\:", ":"));
-                            db.TableByName(tableName).Insert(row.Values);
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                Row row = Row.Parse(columns, line);
+                                table.Insert(row.Values);
+                            }
                         }
-
                     }
                 }
-                
-                    return db;
+                string secFile = Path.Combine(path, "security.dat");
+                if (!File.Exists(secFile)) 
+                {
+                    db.SecurityManager = new Manager("system");
+                    return db; 
+                }
+                db.SecurityManager = Manager.Load(secFile, username);
+                if(db.SecurityManager == null||!db.SecurityManager.IsPasswordCorrect(username, password))
+                {
+                    return null;
+                }
+                return db;
             }
-            catch(Exception ex) {
-                Database db=new Database(username, password);
-                db.LastErrorMessage = ex.Message;
+            catch(Exception ex) 
+            {
                 return null;
             }
         }
@@ -392,7 +397,7 @@ namespace DbManager
         }
     }
 }
-
+    
     
 
 

@@ -1,3 +1,4 @@
+using DbManager.Security;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,12 +11,16 @@ namespace DbManager.Security
         public string Username { get; set; }
         public string EncryptedPassword { get; set; }
 
+        //Aitana
         public User(string username, string password)
         {
             //TODO DEADLINE 5: Initialize the member variables. We must encrypt the password
-            
+            this.Username = username;
+            this.EncryptedPassword = Encryption.Encrypt(password);
+
         }
 
         public User() { }
     }
 }
+
