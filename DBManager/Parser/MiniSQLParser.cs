@@ -270,6 +270,8 @@ namespace DbManager
 
                 return new DeleteUser(userString);
             }
+
+            return null;
         }
 
         static List<string> CommaSeparatedNames(string text)
