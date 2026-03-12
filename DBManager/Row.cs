@@ -21,6 +21,8 @@ namespace DbManager
             this.Values = values;
         }
 
+
+
         public void SetValue(string columnName, string value) // Endika
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
@@ -28,7 +30,14 @@ namespace DbManager
             {
                 if (ColumnDefinitions[i].Name == columnName)
                 {
-                    Values[i]=value;
+                    if (i<Values.Count)
+                    {
+                        Values[i] = value;
+                    }
+                    else
+                    {
+                        Values.Add(value);
+                    }
                     return;
                 }
             }
@@ -40,7 +49,15 @@ namespace DbManager
             for (int i = 0; i < this.ColumnDefinitions.Count; i++)
             {
                 if (ColumnDefinitions[i].Name == columnName) {
-                return Values[i];
+                    if (i<Values.Count)
+                    {
+                        return Values[i];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                
                 }
             }
             return null;
@@ -56,10 +73,8 @@ namespace DbManager
             ColumnDefinition c = null;
             string rowValue = null;
 
-            // Recorremos sin usar break
             for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
-                // Comparamos el nombre de la columna directamente
                 if (ColumnDefinitions[i].Name == condition.ColumnName)
                 {
                     c = ColumnDefinitions[i];
@@ -67,10 +82,8 @@ namespace DbManager
                 }
             }
 
-            // Si no se encontró la columna en esta fila
             if (c == null) return false;
 
-            // Llamamos a la lógica de la condición con el valor tal cual está
             return condition.IsTrue(rowValue, c.Type);
 
 

@@ -176,10 +176,10 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
             if(condition == null) return;
-            var indices= RowIndicesWhereConditionIsTrue(condition);
-            for (int i=0; i<indices.Count; i++)
+            var index= RowIndicesWhereConditionIsTrue(condition);
+            for (int i=index.Count -1; i>=0; i--)
             {
-                Rows.RemoveAt(indices[i]);
+                Rows.RemoveAt(index[i]);
             }    
         }
 

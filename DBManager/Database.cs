@@ -142,7 +142,8 @@ namespace DbManager
             {
                 LastErrorMessage=Constants.InsertSuccess;
                 return true;
-            }else
+            }
+            else
             {
                 LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
@@ -242,6 +243,10 @@ namespace DbManager
             return true;
         }
 
+        private const string tbl=".tbl";
+        private const string Delimiter = "--";
+
+        
         public bool Save(string databaseName) // Endika
         {
             //DEADLINE 1.C: Save this database to disk with the given name
@@ -249,29 +254,31 @@ namespace DbManager
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
             try
             {
-                Directory.CreateDirectory(databaseName);
-                foreach(Table table in Tables)
+                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
+                Directory.CreateDirectory(path);
+                foreach (Table table in Tables)
                 {
-                    string fileName = Path.Combine(databaseName, table.Name + ".tbl");
+                    string fileName = Path.Combine(path, table.Name + tbl);
                     using (TextWriter writer = File.CreateText(fileName))
                     {
-                        for(int i=0; i<table.NumColumns(); i++)
+                        for (int i = 0; i < table.NumColumns(); i++)
                         {
                             writer.WriteLine(table.GetColumn(i).AsText());
                         }
-                        writer.WriteLine("--");
+                        writer.WriteLine(Delimiter);
                         for (int i = 0; i < table.NumRows(); i++)
                         {
                             writer.WriteLine(table.GetRow(i).AsText());
                         }
                     }
                 }
-                SecurityManager.Save(databaseName);
+                SecurityManager.Save(Path.Combine(path, "security.dat"));
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                    LastErrorMessage = Constants.Error + ex.Message;
+                    return false;
             }
             
         }
@@ -284,34 +291,56 @@ namespace DbManager
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
             try
             {
-                Database db = new Database(username, password);
+                Database db = new Database();
+                db.m_username = username;
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                if (!Directory.Exists(path)) {
+                if (!Directory.Exists(path)) 
+                {
                     return null;
                 }
-                foreach (string filePath in Directory.GetFiles(path, "*.tbl"))
+                foreach (var filePath in Directory.GetFiles(path, "*"+tbl))
                 {
                     using (TextReader reader = File.OpenText(filePath))
                     {
                         List<ColumnDefinition> columns = new List<ColumnDefinition>();
                         string line;
-                        while ((line = reader.ReadLine()) != "--")
+                        while ((line = reader.ReadLine()) != null&&line!=Delimiter)
                         {
                             columns.Add(ColumnDefinition.Parse(line));
                         }
                         string tableName = Path.GetFileNameWithoutExtension(filePath);
                         db.CreateTable(tableName, columns);
                         Table table = db.TableByName(tableName);
-                        while ((line = reader.ReadLine()) != null)
+                        if (table == null)
                         {
-                            table.Insert(Row.Parse(columns, line).Values);
+                            db.LastErrorMessage=Constants.TableDoesNotExistError;
+                            return null;
                         }
-
+                        if (line==Delimiter)
+                        {
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                Row row = Row.Parse(columns, line);
+                                table.Insert(row.Values);
+                            }
+                        }
                     }
+                }
+                string secFile = Path.Combine(path, "security.dat");
+                if (!File.Exists(secFile)) 
+                {
+                    db.SecurityManager = new Manager("system");
+                    return db; 
+                }
+                db.SecurityManager = Manager.Load(secFile, username);
+                if(db.SecurityManager == null||!db.SecurityManager.IsPasswordCorrect(username, password))
+                {
+                    return null;
                 }
                 return db;
             }
-            catch {
+            catch(Exception ex) 
+            {
                 return null;
             }
         }
@@ -368,7 +397,7 @@ namespace DbManager
         }
     }
 }
-
+    
     
 
 
