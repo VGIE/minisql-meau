@@ -29,7 +29,25 @@ namespace DbManager
             {
                 return Constants.Error;
             }
-            return null;
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            }
+            if(database.SecurityManager.ProfileByName(ProfileName)==null)
+            {
+                return Constants.SecurityProfileDoesNotExistError;
+            }
+            DbManager.Security.Privilege privilege;
+            if(!Enum.TryParse(PrivilegeName, out privilege))
+            {
+                return Constants.PrivilegeDoesNotExistError;
+            }
+            if(database.SecurityManager.IsGrantedPrivilege(ProfileName,TableName, privilege))
+            {
+                return Constants.ProfileAlreadyHasPrivilege;
+            }
+            database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilege);
+            return Constants.GrantPrivilegeSuccess;
             
         }
 
