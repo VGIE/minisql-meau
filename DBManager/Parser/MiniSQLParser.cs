@@ -1,5 +1,6 @@
 using DbManager.Parser;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace DbManager
@@ -50,7 +51,7 @@ namespace DbManager
             const string conditionPattern = @"^(?<colname>.+)\s*(?<operator>[<> =])\s*(?<value>.+)\s*$";
             const string columnDefinitionPattern = @"^(?<colname>.+)\s*(?<type>String|Int|Double)\s*&";
             
-
+            // SELECT
             Match selectMatch = Regex.Match(miniSQLQuery, selectPattern);
             if (selectMatch.Success)
             {
@@ -78,6 +79,7 @@ namespace DbManager
                 return new Select(table, columns, condition);
             }
 
+            // INSERT
             Match insertMatch = Regex.Match(miniSQLQuery, insertPattern);
             if (insertMatch.Success)
             {
@@ -95,18 +97,57 @@ namespace DbManager
                 return new DropTable(tableString);
             }
 
-
-
+            // CREATE TABLE
             Match createTableMatch = Regex.Match(miniSQLQuery, createTablePattern);
             if (createTableMatch.Success)
             {
                 string tableString = createTableMatch.Groups["table"].Value;
                 List<string> columnsString = CommaSeparatedNames(createTableMatch.Groups["columns"].Value);
+                List<ColumnDefinition> columns = new List<ColumnDefinition>();
 
+                foreach (string column in columnsString)
+                {
+                    ColumnDefinition colDef = null;
 
+                    if (columnsString.Count == 0)
+                    {
+                        Match columnDefMatch = Regex.Match(column, columnDefinitionPattern);
+
+                        if (columnDefMatch.Success)
+                        {
+                            string colName = columnDefMatch.Groups["colname"].Value;
+                            string colType = columnDefMatch.Groups["type"].Value;
+                            ColumnDefinition.DataType colTypeEnum;
+
+                            if (colType == "STRING")
+                            {
+                                colTypeEnum = ColumnDefinition.DataType.String;
+                            }
+                            else if (colType == "DOUBLE")
+                            {
+                                colTypeEnum = ColumnDefinition.DataType.Double;
+                            }
+                            else
+                            {
+                                colTypeEnum = ColumnDefinition.DataType.Int;
+                            }
+
+                            colDef = new ColumnDefinition(colTypeEnum, colName);
+
+                            columns.Add(colDef);
+                        }
+                    }
+                }
+
+                return new CreateTable(tableString, columns);
             }
 
-            return null;
+            // UPDATE TABLE
+            Match updateTableMatch = Regex.Match(miniSQLQuery, updateTablePattern);
+            if (updateTableMatch.Success)
+            {
+
+            }
            
         }
 
