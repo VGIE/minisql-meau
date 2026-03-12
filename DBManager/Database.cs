@@ -255,7 +255,7 @@ namespace DbManager
             try
             {
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                Directory.CreateDirectory(databaseName);
+                Directory.CreateDirectory(path);
                 foreach (Table table in Tables)
                 {
                     string fileName = Path.Combine(path, table.Name + tbl);
@@ -304,7 +304,7 @@ namespace DbManager
                     {
                         List<ColumnDefinition> columns = new List<ColumnDefinition>();
                         string line;
-                        while ((line = reader.ReadLine()) != Delimiter)
+                        while ((line = reader.ReadLine()) != null&&line!=Delimiter)
                         {
                             columns.Add(ColumnDefinition.Parse(line));
                         }
@@ -316,17 +316,24 @@ namespace DbManager
                             db.LastErrorMessage=Constants.TableDoesNotExistError;
                             return null;
                         }
-                        while ((line = reader.ReadLine()) != null)
+                        if (line==Delimiter)
                         {
-                            Row row=Row.Parse(columns, line);
-                            db.TableByName(tableName).Insert(row.Values);
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                Row row = Row.Parse(columns, line);
+                                table.Insert(row.Values);
+                            }
                         }
-
                     }
                 }
                 string secFile = Path.Combine(path, "security.dat");
+                if (!File.Exists(secFile)) 
+                {
+                    db.SecurityManager = new Manager("system");
+                    return db; 
+                }
                 db.SecurityManager = Manager.Load(secFile, username);
-                if(!db.SecurityManager.IsPasswordCorrect(username, password))
+                if(db.SecurityManager == null||!db.SecurityManager.IsPasswordCorrect(username, password))
                 {
                     return null;
                 }
