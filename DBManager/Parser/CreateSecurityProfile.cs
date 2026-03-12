@@ -23,13 +23,7 @@ namespace DbManager
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, CreateSecurityProfileSuccess
 
-            if (!database.IsUserAdmin())
-            {
-                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
-            }
-
-            database.SecurityManager.AddProfile(new Profile { Name = ProfileName });
-            return Constants.CreateSecurityProfileSuccess;
+            return null;
 
 
         }

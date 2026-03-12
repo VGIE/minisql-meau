@@ -14,15 +14,17 @@ namespace DbManager
         public DropSecurityProfile(string profileName)
         {
             //TODO DEADLINE 4: Initialize member variables
-            
+            this.ProfileName = profileName;
+
+
         }
         public string Execute(Database database)
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, DropSecurityProfileSuccess
-            
+
             return null;
-            
+
         }
 
     }
