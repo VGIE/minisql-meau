@@ -20,7 +20,7 @@ namespace DbManager
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+\w+(?:,\w+\s+\w+)*)\s*\)\s*$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:,\w+\s+(?:INT|DOUBLE|STRING))*)\s*\)\s*$";
             
             const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|[^,\s]+)(?:,\s*\w+\s*=\s*(?:'[^']*'|[^,\s]+))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
