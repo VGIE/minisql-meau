@@ -75,7 +75,7 @@ namespace OurTests
         public void TestSelAllCWithAS()
         {
             Select select = MiniSQLParser.Parse("SELECT * FROM TestTable") as Select;
-            Assert.Null(select);
+            Assert.Contains("*",select.Columns);
             
         }
 
