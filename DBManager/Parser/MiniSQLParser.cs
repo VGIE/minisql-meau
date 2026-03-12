@@ -50,7 +50,7 @@ namespace DbManager
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
             const string conditionPattern = @"^(?<colname>.+)\s*(?<operator>[<> =])\s*(?<value>.+)\s*$";
-            const string columnDefinitionPattern = @"^(?<colname>.+)\s*(?<type>String|Int|Double)\s*&";
+            const string columnDefinitionPattern = @"^(?<colname>.+)\s*(?<type>String|Int|Double)\s*$";
             const string setValuePattern = @"^(?<colname>.+)\s*(?<value>.+)\s*$";
             
             // SELECT
