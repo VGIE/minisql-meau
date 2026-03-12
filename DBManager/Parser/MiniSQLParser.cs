@@ -184,6 +184,32 @@ namespace DbManager
 
                 return new Update(tableString, assignmentsSetValue, condition);
             }
+
+            // DELETE
+            Match deleteMatch = Regex.Match(miniSQLQuery, deletePattern);
+            if (deleteMatch.Success)
+            {
+                string tableString = deleteMatch.Groups["table"].Value;
+                string conditionString = deleteMatch.Groups["condition"].Value;
+
+                Condition condition = null;
+
+                if (!string.IsNullOrEmpty(conditionString))
+                {
+                    Match conditionMatch = Regex.Match(conditionString, conditionPattern);
+
+                    if (conditionMatch.Success)
+                    {
+                        string colname = conditionMatch.Groups["colname"].Value;
+                        string operatorString = conditionMatch.Groups["operator"].Value;
+                        string valueString = conditionMatch.Groups["value"].Value;
+
+                        condition = new Condition(colname, operatorString, valueString);
+                    }
+                }
+
+                return new Delete(tableString, condition);
+            }
            
         }
 
