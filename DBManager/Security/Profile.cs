@@ -14,6 +14,7 @@ namespace DbManager.Security
 
         public Dictionary<string, List<Privilege>> PrivilegesOn { get; private set; } = new Dictionary<string, List<Privilege>>();
 
+        // Aitana
         public bool GrantPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise

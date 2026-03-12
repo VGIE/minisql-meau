@@ -18,6 +18,7 @@ namespace DbManager.Security
             m_username = username;
         }
 
+        // Aitana
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
@@ -25,6 +26,7 @@ namespace DbManager.Security
             return false;
         }
 
+        // Maialen
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
@@ -33,6 +35,7 @@ namespace DbManager.Security
             
         }
 
+        // Endika
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
@@ -40,6 +43,7 @@ namespace DbManager.Security
             
         }
 
+        // Endika
         public void RevokePrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
@@ -47,6 +51,7 @@ namespace DbManager.Security
             
         }
 
+        // Unai
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
@@ -55,12 +60,14 @@ namespace DbManager.Security
             
         }
 
+        // Aitana
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
             
         }
 
+        // Maialen
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
@@ -69,6 +76,7 @@ namespace DbManager.Security
             
         }
 
+        // Maialen
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
@@ -77,6 +85,7 @@ namespace DbManager.Security
             
         }
 
+        // Unai
         public Profile ProfileByUser(string username)
         {
             //TODO DEADLINE 5: Return the profile by user. If the user doesn't exist, return null
@@ -85,6 +94,7 @@ namespace DbManager.Security
             
         }
 
+        // Aitana
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
@@ -92,6 +102,7 @@ namespace DbManager.Security
             return false;
         }
 
+        // Unai
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
@@ -100,6 +111,7 @@ namespace DbManager.Security
             
         }
 
+        // Endika
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
