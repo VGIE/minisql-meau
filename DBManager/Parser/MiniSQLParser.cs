@@ -1,5 +1,6 @@
 using DbManager.Parser;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
@@ -50,6 +51,7 @@ namespace DbManager
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
             const string conditionPattern = @"^(?<colname>.+)\s*(?<operator>[<> =])\s*(?<value>.+)\s*$";
             const string columnDefinitionPattern = @"^(?<colname>.+)\s*(?<type>String|Int|Double)\s*&";
+            const string setValuePattern = @"^(?<colname>.+)\s*(?<value>.+)\s*$";
             
             // SELECT
             Match selectMatch = Regex.Match(miniSQLQuery, selectPattern);
@@ -103,39 +105,35 @@ namespace DbManager
             {
                 string tableString = createTableMatch.Groups["table"].Value;
                 List<string> columnsString = CommaSeparatedNames(createTableMatch.Groups["columns"].Value);
-                List<ColumnDefinition> columns = new List<ColumnDefinition>();
+                List<ColumnDefinition> columns = new();
 
                 foreach (string column in columnsString)
                 {
                     ColumnDefinition colDef = null;
+                    Match columnDefMatch = Regex.Match(column, columnDefinitionPattern);
 
-                    if (columnsString.Count == 0)
+                    if (columnDefMatch.Success)
                     {
-                        Match columnDefMatch = Regex.Match(column, columnDefinitionPattern);
+                        string colName = columnDefMatch.Groups["colname"].Value;
+                        string colType = columnDefMatch.Groups["type"].Value;
+                        ColumnDefinition.DataType colTypeEnum;
 
-                        if (columnDefMatch.Success)
+                        if (colType == "STRING")
                         {
-                            string colName = columnDefMatch.Groups["colname"].Value;
-                            string colType = columnDefMatch.Groups["type"].Value;
-                            ColumnDefinition.DataType colTypeEnum;
-
-                            if (colType == "STRING")
-                            {
-                                colTypeEnum = ColumnDefinition.DataType.String;
-                            }
-                            else if (colType == "DOUBLE")
-                            {
-                                colTypeEnum = ColumnDefinition.DataType.Double;
-                            }
-                            else
-                            {
-                                colTypeEnum = ColumnDefinition.DataType.Int;
-                            }
-
-                            colDef = new ColumnDefinition(colTypeEnum, colName);
-
-                            columns.Add(colDef);
+                            colTypeEnum = ColumnDefinition.DataType.String;
                         }
+                        else if (colType == "DOUBLE")
+                        {
+                            colTypeEnum = ColumnDefinition.DataType.Double;
+                        }
+                        else
+                        {
+                            colTypeEnum = ColumnDefinition.DataType.Int;
+                        }
+
+                        colDef = new ColumnDefinition(colTypeEnum, colName);
+
+                        columns.Add(colDef);
                     }
                 }
 
@@ -146,7 +144,45 @@ namespace DbManager
             Match updateTableMatch = Regex.Match(miniSQLQuery, updateTablePattern);
             if (updateTableMatch.Success)
             {
+                string tableString = updateTableMatch.Groups["table"].Value;
+                List<string> assignmentsString = CommaSeparatedNames(updateTableMatch.Groups["assignments"].Value);
+                string conditionString = updateTableMatch.Groups["condition"].Value;
 
+                List<SetValue> assignmentsSetValue = new();
+
+                foreach (string assignment in assignmentsString)
+                {
+                    SetValue setValue = null;
+                    Match setValueMatch = Regex.Match(assignment, setValuePattern);
+
+                    if (setValueMatch.Success)
+                    {
+                        string colName = setValueMatch.Groups["colname"].Value;
+                        string value = setValueMatch.Groups["value"].Value;
+
+                        setValue = new SetValue(colName, value);
+
+                        assignmentsSetValue.Add(setValue);
+                    }
+                }
+
+                Condition condition = null;
+
+                if (!string.IsNullOrEmpty(conditionString))
+                {
+                    Match conditionMatch = Regex.Match(conditionString, conditionPattern);
+
+                    if (conditionMatch.Success)
+                    {
+                        string colname = conditionMatch.Groups["colname"].Value;
+                        string operatorString = conditionMatch.Groups["operator"].Value;
+                        string valueString = conditionMatch.Groups["value"].Value;
+
+                        condition = new Condition(colname, operatorString, valueString);
+                    }
+                }
+
+                return new Update(tableString, assignmentsSetValue, condition);
             }
            
         }
