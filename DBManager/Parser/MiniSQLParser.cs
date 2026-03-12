@@ -126,9 +126,13 @@ namespace DbManager
                         {
                             colTypeEnum = ColumnDefinition.DataType.Double;
                         }
-                        else
+                        else if (colType == "INT")
                         {
                             colTypeEnum = ColumnDefinition.DataType.Int;
+                        }
+                        else
+                        {
+                            return null;
                         }
 
                         colDef = new ColumnDefinition(colTypeEnum, colName);
