@@ -210,7 +210,66 @@ namespace DbManager
 
                 return new Delete(tableString, condition);
             }
-           
+
+            // CREATE SECURITY PROFILE
+            Match createSecProfileMatch = Regex.Match(miniSQLQuery, createSecurityProfilePattern);
+            if (createSecProfileMatch.Success)
+            {
+                string secProfile = createSecProfileMatch.Groups["secprofile"].Value;
+
+                return new CreateSecurityProfile(secProfile);
+            }
+
+            // DROP SECURITY PROFILE
+            Match dropSecProfileMatch = Regex.Match(miniSQLQuery, dropSecurityProfilePattern);
+            if (dropSecProfileMatch.Success)
+            {
+                string secProfile = dropSecProfileMatch.Groups["secprofile"].Value;
+
+                return new DropSecurityProfile(secProfile);
+            }
+
+            // GRANT
+            Match grantMatch = Regex.Match(miniSQLQuery, grantPattern);
+            if (grantMatch.Success)
+            {
+                string privilegeString = grantMatch.Groups["privilege"].Value;
+                string tableString = grantMatch.Groups["value"].Value;
+                string secprofileString = grantMatch.Groups["secprofile"].Value;
+
+                return new Grant(privilegeString, tableString, secprofileString);
+            }
+
+            // REVOKE
+            Match revokeMatch = Regex.Match(miniSQLQuery, revokePattern);
+            if (revokeMatch.Success)
+            {
+                string privilegeString = revokeMatch.Groups["privilege"].Value;
+                string tableString = revokeMatch.Groups["value"].Value;
+                string secprofileString = revokeMatch.Groups["secprofile"].Value;
+
+                return new Revoke(privilegeString, tableString, secprofileString);
+            }
+
+            // ADD USER
+            Match addUserMatch = Regex.Match(miniSQLQuery, addUserPattern);
+            if (addUserMatch.Success)
+            {
+                string userString = addUserMatch.Groups["user"].Value;
+                string passString = addUserMatch.Groups["password"].Value;
+                string secprofileString = addUserMatch.Groups["secprofile"].Value;
+
+                return new AddUser(userString, passString, secprofileString);
+            }
+
+            // DELETE USER
+            Match deleteUserMatch = Regex.Match(miniSQLQuery, deleteUserPattern);
+            if (deleteUserMatch.Success)
+            {
+                string userString = deleteUserMatch.Groups["user"].Value;
+
+                return new DeleteUser(userString);
+            }
         }
 
         static List<string> CommaSeparatedNames(string text)
