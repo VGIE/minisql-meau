@@ -196,15 +196,19 @@ namespace DbManager
                     columnNames.Add(col.Name);
                 }
             }
+            foreach(string name in columnNames)
+            {
+                if(ColumnIndexByName(name)==-1)
+                {
+                    return new Table("Result", new List<ColumnDefinition>());
+                }
+            }
 
             List<ColumnDefinition> selectedColumns = new List<ColumnDefinition>();
             foreach (string name in columnNames)
             {
                 int index = ColumnIndexByName(name);
-                if (index != -1)
-                {
-                    selectedColumns.Add(ColumnDefinitions[index]);
-                }
+                selectedColumns.Add(ColumnDefinitions[index]);
             }
 
             Table result = new Table("Result", selectedColumns);
@@ -218,10 +222,7 @@ namespace DbManager
                     foreach (var name in columnNames)
                     {
                         int colIndex = ColumnIndexByName(name);
-                        if (colIndex != -1)
-                        {
-                            selectedValues.Add(row.Values[colIndex]);
-                        }
+                        selectedValues.Add(row.Values[colIndex]);
                     }
 
                     Row newRow = new Row(selectedColumns, selectedValues);
