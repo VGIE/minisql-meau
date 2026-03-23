@@ -13,7 +13,7 @@ namespace DbManager
         {
             //TODO DEADLINE 2
 
-            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+            RegexOptions options = RegexOptions.Singleline;
 
             const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
