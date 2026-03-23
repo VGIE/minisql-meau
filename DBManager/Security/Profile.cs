@@ -19,23 +19,64 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
             
-            return false;
-            
+            if (table == null)
+            {
+                return false;
+            }
+
+            if (!PrivilegesOn.ContainsKey(table))
+            {
+                PrivilegesOn[table] = new List<Privilege>();
+            }
+
+            if (PrivilegesOn[table].Contains(privilege))
+            {
+                return false;
+            }
+
+            PrivilegesOn[table].Add(privilege);
+            return true;
         }
 
         public bool RevokePrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
-            
-            return false;
-            
+
+            if (table == null)
+            {
+                return false;
+            }
+
+            if (!PrivilegesOn.ContainsKey(table))
+            {
+                return false;
+            }
+
+            if (!PrivilegesOn[table].Contains(privilege))
+            {
+                return false;
+            }
+
+            PrivilegesOn[table].Remove(privilege);
+            return true;
+
         }
 
         public bool IsGrantedPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return whether this profile is granted this privilege on this table
-            
-            return false;
+
+            if (table == null)
+            {
+                return false;
+            }
+
+            if (!PrivilegesOn.ContainsKey(table))
+            {
+                return false;
+            }
+
+            return PrivilegesOn[table].Contains(privilege);
         }
     }
 }
