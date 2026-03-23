@@ -12,16 +12,17 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
+
+            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+
             const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
             const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>'[^']*'(?:,\s*'[^']*')*)\)\s*$";
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
-            
-            //Note: The parsing of CREATE TABLE should accept empty columns "()"
-            //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:,\w+\s+(?:INT|DOUBLE|STRING))*)\s*\)\s*$";
-            
+
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>(?:\w+\s+(?:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?:INT|DOUBLE|STRING))*)?)\s*\)\s*?$";
+
             const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|[^,\s]+)(?:,\s*\w+\s*=\s*(?:'[^']*'|[^,\s]+))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
             const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>.+)\s*$";
@@ -54,7 +55,7 @@ namespace DbManager
             const string setValuePattern = @"^(?<colname>.+)\s*(?<value>.+)\s*$";
             
             // SELECT
-            Match selectMatch = Regex.Match(miniSQLQuery, selectPattern);
+            Match selectMatch = Regex.Match(miniSQLQuery, selectPattern, options);
             if (selectMatch.Success)
             {
                 string table = selectMatch.Groups["table"].Value;
@@ -66,7 +67,7 @@ namespace DbManager
 
                 if (!string.IsNullOrEmpty(conditionString))
                 {
-                    Match conditionMatch = Regex.Match(conditionString, conditionPattern);
+                    Match conditionMatch = Regex.Match(conditionString, conditionPattern, options);
 
                     if (conditionMatch.Success)
                     {
@@ -82,7 +83,7 @@ namespace DbManager
             }
 
             // INSERT
-            Match insertMatch = Regex.Match(miniSQLQuery, insertPattern);
+            Match insertMatch = Regex.Match(miniSQLQuery, insertPattern, options);
             if (insertMatch.Success)
             {
                 string tableString = insertMatch.Groups["table"].Value;
@@ -91,7 +92,7 @@ namespace DbManager
                 return new Insert(tableString, values);
             }
 
-            Match dropTableMatch = Regex.Match(miniSQLQuery, dropTablePattern);
+            Match dropTableMatch = Regex.Match(miniSQLQuery, dropTablePattern, options);
             if (dropTableMatch.Success)
             {
                 string tableString = dropTableMatch.Groups["table"].Value;
@@ -100,7 +101,7 @@ namespace DbManager
             }
 
             // CREATE TABLE
-            Match createTableMatch = Regex.Match(miniSQLQuery, createTablePattern);
+            Match createTableMatch = Regex.Match(miniSQLQuery, createTablePattern, options);
             if (createTableMatch.Success)
             {
                 string tableString = createTableMatch.Groups["table"].Value;
@@ -110,7 +111,7 @@ namespace DbManager
                 foreach (string column in columnsString)
                 {
                     ColumnDefinition colDef = null;
-                    Match columnDefMatch = Regex.Match(column, columnDefinitionPattern);
+                    Match columnDefMatch = Regex.Match(column, columnDefinitionPattern, options);
 
                     if (columnDefMatch.Success)
                     {
@@ -145,7 +146,7 @@ namespace DbManager
             }
 
             // UPDATE TABLE
-            Match updateTableMatch = Regex.Match(miniSQLQuery, updateTablePattern);
+            Match updateTableMatch = Regex.Match(miniSQLQuery, updateTablePattern, options);
             if (updateTableMatch.Success)
             {
                 string tableString = updateTableMatch.Groups["table"].Value;
@@ -157,7 +158,7 @@ namespace DbManager
                 foreach (string assignment in assignmentsString)
                 {
                     SetValue setValue = null;
-                    Match setValueMatch = Regex.Match(assignment, setValuePattern);
+                    Match setValueMatch = Regex.Match(assignment, setValuePattern, options);
 
                     if (setValueMatch.Success)
                     {
@@ -174,7 +175,7 @@ namespace DbManager
 
                 if (!string.IsNullOrEmpty(conditionString))
                 {
-                    Match conditionMatch = Regex.Match(conditionString, conditionPattern);
+                    Match conditionMatch = Regex.Match(conditionString, conditionPattern, options);
 
                     if (conditionMatch.Success)
                     {
@@ -190,7 +191,7 @@ namespace DbManager
             }
 
             // DELETE
-            Match deleteMatch = Regex.Match(miniSQLQuery, deletePattern);
+            Match deleteMatch = Regex.Match(miniSQLQuery, deletePattern, options);
             if (deleteMatch.Success)
             {
                 string tableString = deleteMatch.Groups["table"].Value;
@@ -200,7 +201,7 @@ namespace DbManager
 
                 if (!string.IsNullOrEmpty(conditionString))
                 {
-                    Match conditionMatch = Regex.Match(conditionString, conditionPattern);
+                    Match conditionMatch = Regex.Match(conditionString, conditionPattern, options);
 
                     if (conditionMatch.Success)
                     {
@@ -216,7 +217,7 @@ namespace DbManager
             }
 
             // CREATE SECURITY PROFILE
-            Match createSecProfileMatch = Regex.Match(miniSQLQuery, createSecurityProfilePattern);
+            Match createSecProfileMatch = Regex.Match(miniSQLQuery, createSecurityProfilePattern, options);
             if (createSecProfileMatch.Success)
             {
                 string secProfile = createSecProfileMatch.Groups["secprofile"].Value;
@@ -225,7 +226,7 @@ namespace DbManager
             }
 
             // DROP SECURITY PROFILE
-            Match dropSecProfileMatch = Regex.Match(miniSQLQuery, dropSecurityProfilePattern);
+            Match dropSecProfileMatch = Regex.Match(miniSQLQuery, dropSecurityProfilePattern, options);
             if (dropSecProfileMatch.Success)
             {
                 string secProfile = dropSecProfileMatch.Groups["secprofile"].Value;
@@ -234,7 +235,7 @@ namespace DbManager
             }
 
             // GRANT
-            Match grantMatch = Regex.Match(miniSQLQuery, grantPattern);
+            Match grantMatch = Regex.Match(miniSQLQuery, grantPattern, options);
             if (grantMatch.Success)
             {
                 string privilegeString = grantMatch.Groups["privilege"].Value;
@@ -245,7 +246,7 @@ namespace DbManager
             }
 
             // REVOKE
-            Match revokeMatch = Regex.Match(miniSQLQuery, revokePattern);
+            Match revokeMatch = Regex.Match(miniSQLQuery, revokePattern, options);
             if (revokeMatch.Success)
             {
                 string privilegeString = revokeMatch.Groups["privilege"].Value;
@@ -256,7 +257,7 @@ namespace DbManager
             }
 
             // ADD USER
-            Match addUserMatch = Regex.Match(miniSQLQuery, addUserPattern);
+            Match addUserMatch = Regex.Match(miniSQLQuery, addUserPattern, options);
             if (addUserMatch.Success)
             {
                 string userString = addUserMatch.Groups["user"].Value;
@@ -267,7 +268,7 @@ namespace DbManager
             }
 
             // DELETE USER
-            Match deleteUserMatch = Regex.Match(miniSQLQuery, deleteUserPattern);
+            Match deleteUserMatch = Regex.Match(miniSQLQuery, deleteUserPattern, options);
             if (deleteUserMatch.Success)
             {
                 string userString = deleteUserMatch.Groups["user"].Value;
