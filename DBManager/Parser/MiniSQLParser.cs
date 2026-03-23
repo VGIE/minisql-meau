@@ -118,16 +118,19 @@ namespace DbManager
                         string colName = columnDefMatch.Groups["colname"].Value;
                         string colType = columnDefMatch.Groups["type"].Value;
                         ColumnDefinition.DataType colTypeEnum;
+                        string STRING = "STRING";
+                        string DOUBLE = "DOUBLE";
+                        string INT = "INT";
 
-                        if (colType == "STRING")
+                        if (colType == STRING)
                         {
                             colTypeEnum = ColumnDefinition.DataType.String;
                         }
-                        else if (colType == "DOUBLE")
+                        else if (colType == DOUBLE)
                         {
                             colTypeEnum = ColumnDefinition.DataType.Double;
                         }
-                        else if (colType == "INT")
+                        else if (colType == INT)
                         {
                             colTypeEnum = ColumnDefinition.DataType.Int;
                         }
