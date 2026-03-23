@@ -39,6 +39,14 @@ namespace DbManager
             
         }
 
+        public int NumTables()
+
+        {
+
+             return Tables.Count; 
+
+        }
+
         public bool AddTable(Table table) // Aitana
         {
             //DEADLINE 1.B: Add a new table to the database
