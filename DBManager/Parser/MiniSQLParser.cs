@@ -17,13 +17,13 @@ namespace DbManager
 
             const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
-            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>'[^']*'(?:,\s*'[^']*')*)\)\s*$";
+            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\(\s*(?<values>(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:\s*,\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s*\)\s*$";
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
 
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>(?:\w+\s+(?:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?:INT|DOUBLE|STRING))*)?)\s*\)\s*?$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?:INT|DOUBLE|STRING))*)\s*\)\s*$";
 
-            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|[^,\s]+)(?:,\s*\w+\s*=\s*(?:'[^']*'|[^,\s]+))*)\s+WHERE\s+(?<condition>.+)\s*$";
+            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:\s*,\s*\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
             const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>.+)\s*$";
             
@@ -50,9 +50,9 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            const string conditionPattern = @"^(?<colname>.+)\s*(?<operator>[<> =])\s*(?<value>.+)\s*$";
-            const string columnDefinitionPattern = @"^(?<colname>.+)\s*(?<type>String|Int|Double)\s*$";
-            const string setValuePattern = @"^(?<colname>.+)\s*(?<value>.+)\s*$";
+            const string conditionPattern = @"^(?<colname>\w+)\s*(?<operator>[<>=]+)\s*(?<value>'[^']*'|-?[0-9]+(?:\.[0-9]+)?)\s*$";
+            const string columnDefinitionPattern = @"^(?<colname>\w+)\s*(?<type>STRING|INT|DOUBLE)\s*$";
+            const string setValuePattern = @"^(?<colname>\w+)\s*=\s*(?<value>.+)\s*$";
             
             // SELECT
             Match selectMatch = Regex.Match(miniSQLQuery, selectPattern, options);
@@ -61,6 +61,7 @@ namespace DbManager
                 string table = selectMatch.Groups["table"].Value;
 
                 List<string> columns = CommaSeparatedNames(selectMatch.Groups["columns"].Value);
+                if (columns == null) return null;
 
                 string conditionString = selectMatch.Groups["condition"].Value;
                 Condition condition = null;
@@ -77,6 +78,7 @@ namespace DbManager
 
                         condition = new Condition(colname, operatorString, valueString);
                     }
+                    else return null;
                 }
 
                 return new Select(table, columns, condition);
@@ -88,6 +90,7 @@ namespace DbManager
             {
                 string tableString = insertMatch.Groups["table"].Value;
                 List<string> values = CommaSeparatedNames(insertMatch.Groups["values"].Value);
+                if (values == null) return null;
 
                 return new Insert(tableString, values);
             }
@@ -106,6 +109,7 @@ namespace DbManager
             {
                 string tableString = createTableMatch.Groups["table"].Value;
                 List<string> columnsString = CommaSeparatedNames(createTableMatch.Groups["columns"].Value);
+                if (columnsString == null) return null;
                 List<ColumnDefinition> columns = new();
 
                 foreach (string column in columnsString)
@@ -143,6 +147,10 @@ namespace DbManager
 
                         columns.Add(colDef);
                     }
+                    else
+                    {
+                        return null;
+                    }
                 }
 
                 return new CreateTable(tableString, columns);
@@ -154,6 +162,7 @@ namespace DbManager
             {
                 string tableString = updateTableMatch.Groups["table"].Value;
                 List<string> assignmentsString = CommaSeparatedNames(updateTableMatch.Groups["assignments"].Value);
+                if (assignmentsString == null) return null;
                 string conditionString = updateTableMatch.Groups["condition"].Value;
 
                 List<SetValue> assignmentsSetValue = new();
@@ -172,6 +181,7 @@ namespace DbManager
 
                         assignmentsSetValue.Add(setValue);
                     }
+                    else return null;
                 }
 
                 Condition condition = null;
@@ -242,7 +252,7 @@ namespace DbManager
             if (grantMatch.Success)
             {
                 string privilegeString = grantMatch.Groups["privilege"].Value;
-                string tableString = grantMatch.Groups["value"].Value;
+                string tableString = grantMatch.Groups["table"].Value;
                 string secprofileString = grantMatch.Groups["secprofile"].Value;
 
                 return new Grant(privilegeString, tableString, secprofileString);
@@ -253,7 +263,7 @@ namespace DbManager
             if (revokeMatch.Success)
             {
                 string privilegeString = revokeMatch.Groups["privilege"].Value;
-                string tableString = revokeMatch.Groups["value"].Value;
+                string tableString = revokeMatch.Groups["table"].Value;
                 string secprofileString = revokeMatch.Groups["secprofile"].Value;
 
                 return new Revoke(privilegeString, tableString, secprofileString);
@@ -288,7 +298,7 @@ namespace DbManager
             List<string> commaSeparator = new List<string>();
             for(int i=0; i < textParts.Length; i++)
             {
-                commaSeparator.Add(textParts[i]);
+                commaSeparator.Add(textParts[i].Trim());
             }
             return commaSeparator;
         }
