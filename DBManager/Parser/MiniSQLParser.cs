@@ -15,7 +15,7 @@ namespace DbManager
 
             RegexOptions options = RegexOptions.Singleline;
 
-            const string selectPattern = @"^SELECT\s+(?<columns>.+)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
+            const string selectPattern = @"^SELECT\s+(?<columns>(?:\w+|\*)(?:\s*,\s*(?:\w+|\*))*)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
             
             const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\(\s*(?<values>(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:\s*,\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s*\)\s*$";
             
