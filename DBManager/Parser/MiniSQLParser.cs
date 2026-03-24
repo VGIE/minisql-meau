@@ -21,7 +21,7 @@ namespace DbManager
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
 
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?:INT|DOUBLE|STRING))*)\s*\)\s*$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?i:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?i:INT|DOUBLE|STRING))*)\s*\)\s*$";
 
             const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:\s*,\s*\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
@@ -51,7 +51,7 @@ namespace DbManager
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
             const string conditionPattern = @"^(?<colname>\w+)\s*(?<operator>[<>=]+)\s*(?<value>'[^']*'|-?[0-9]+(?:\.[0-9]+)?)\s*$";
-            const string columnDefinitionPattern = @"^(?<colname>\w+)\s*(?<type>STRING|INT|DOUBLE)\s*$";
+            const string columnDefinitionPattern = @"^(?<colname>\w+)\s*(?<type>(?i:STRING|INT|DOUBLE))\s*$";
             const string setValuePattern = @"^(?<colname>\w+)\s*=\s*(?<value>.+)\s*$";
             
             // SELECT
