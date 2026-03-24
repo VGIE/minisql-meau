@@ -27,15 +27,8 @@ namespace DbManager.Parser
             { 
                 return Constants.Error;
             }
-            Table table = database.TableByName(Table);
-
-            if (table == null)
-            {
-                return Constants.TableDoesNotExistError;
-            }
-            table.DeleteWhere(Where);
+            database.DeleteWhere(Table, Where);
             return Constants.DeleteSuccess;
-            
         }
     }
 }
