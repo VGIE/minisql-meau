@@ -42,10 +42,11 @@ namespace DbManager
                 return Constants.TableAlreadyExistsError;
             }
 
-            if (ColumnsParameters == null || ColumnsParameters.Count == 0) 
+            if (this.ColumnsParameters == null || this.ColumnsParameters.Count == 0)
             {
                 return Constants.DatabaseCreatedWithoutColumnsError;
-            }
+            }    
+                
 
             List<string> names = new List<string>();
             foreach (ColumnDefinition col in ColumnsParameters)
@@ -57,7 +58,7 @@ namespace DbManager
                 names.Add(col.Name);
             }
             
-            if (database.CreateTable(Table, ColumnsParameters))
+            if (database.CreateTable(this.Table, this.ColumnsParameters))
             {
                 return Constants.CreateTableSuccess;
             }
