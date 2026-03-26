@@ -21,7 +21,7 @@ namespace DbManager
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
 
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s+\(\s*(?<columns>\w+\s+(INT|DOUBLE|STRING)(?:,\w+\s+(INT|DOUBLE|STRING))*)\)\s*$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s+\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:,\w+\s+(?:INT|DOUBLE|STRING))*)\)\s*$";
 
             const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>\S.+)\s*$";
             
