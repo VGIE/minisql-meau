@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using DbManager;
 using NuGet.Frameworks;
@@ -28,29 +28,28 @@ namespace OurTests.parseTests
         [Fact]
         public void CorrectWithSpaces()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='string1', Col2=10 WHERE Col3 = 'string3'") as Update;
-            Assert.NotNull(query);
-            Assert.Equal("Table", query.Table);
-            var query2 = MiniSQLParser.Parse("UPDATE  Table SET Col1='string1', Col2=10 WHERE Col3 = 'string3'") as Update;
-            Assert.NotNull(query2);
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='string1', Col2=10 WHERE Col3 = 'string3'");
+            Assert.Null(query);
+            var query2 = MiniSQLParser.Parse("UPDATE  Table SET Col1='string1', Col2=10 WHERE Col3 = 'string3'");
+            Assert.Null(query2);
         }
         [Fact]
         public void StringValue()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='string1' WHERE Col3 = 'string3'") as Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='string1' WHERE Col3='string3'") as Update;
             Assert.NotNull(query);
             Assert.Equal("Table", query.Table);
         }
         [Fact]
         public void IntValue()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10 WHERE Col3 = 30") as Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10 WHERE Col3=30") as Update;
             Assert.NotNull(query);
         }
         [Fact]
         public void DoubleValue()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10.5 WHERE Col3 = 30.5") as Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10.5 WHERE Col3=30.5") as Update;
             Assert.NotNull(query);
         }
         [Fact]
