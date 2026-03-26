@@ -23,7 +23,7 @@ namespace DbManager
 
             const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?i:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?i:INT|DOUBLE|STRING))*)\s*\)\s*$";
 
-            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:\s*,\s*\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>.+)\s*$";
+            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
             const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>.+)\s*$";
             
