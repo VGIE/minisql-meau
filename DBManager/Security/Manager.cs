@@ -23,8 +23,20 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
             
+           
+            Profile profile = ProfileByUser(m_username);
+
+            if (profile != null)
+            {
+                if (profile.Name.Equals(Profile.AdminProfileName))
+                    return true;
+            }
             return false;
+    
         }
+
+
+
 
         // Maialen
         public bool IsPasswordCorrect(string username, string password)
@@ -43,7 +55,7 @@ namespace DbManager.Security
             
         }
 
-        // Endika
+        // Unai
         public void RevokePrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
@@ -51,20 +63,51 @@ namespace DbManager.Security
             
         }
 
-        // Unai
+        // Aitana
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
-            
-            return false;
-            
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
+            {
+                return false;
+            }
+
+            Profile profile = ProfileByUser(username);
+            if (profile == null)
+            {
+                return false;
+            }
+
+            if (profile.Name == Profile.AdminProfileName)
+            {
+                return true;
+            }
+
+            return profile.IsGrantedPrivilege(table, privilege);
+
+
+
         }
 
         // Aitana
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
-            
+
+
+            if (IsUserAdmin())
+            {
+                if (profile != null)
+                {
+                    if (ProfileByName(profile.Name) == null)
+                    {
+                        Profiles.Add(profile);
+                    }
+                }
+            }
+
+
         }
 
         // Maialen
@@ -99,7 +142,22 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this profile
             
+  
+            if (IsUserAdmin())
+            {
+                Profile profile = ProfileByName(profileName);
+
+                if (profile != null)
+                {
+
+                    Profiles.Remove(profile);
+                    return true;
+                    
+                }
+            }
+
             return false;
+
         }
 
         // Unai
