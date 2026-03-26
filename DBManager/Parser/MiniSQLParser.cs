@@ -127,11 +127,11 @@ namespace DbManager
                         string colName = columnDefMatch.Groups["colname"].Value;
                         string colType = columnDefMatch.Groups["type"].Value;
                         ColumnDefinition.DataType colTypeEnum;
-                        string STRING = "STRING";
+                        string TEXT = "TEXT";
                         string DOUBLE = "DOUBLE";
                         string INT = "INT";
 
-                        if (colType == STRING)
+                        if (colType == TEXT)
                         {
                             colTypeEnum = ColumnDefinition.DataType.String;
                         }

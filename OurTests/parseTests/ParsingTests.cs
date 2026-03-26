@@ -9,10 +9,10 @@ namespace ParsingTests
         [Fact]
         public void CorrectWithSpaces()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='Val1', Col2=10 WHERE Col3 = 'Val3'");
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='Val1', Col2='10' WHERE Col3 = 'Val3'");
             Assert.Null(query);
             
-            var query2 = MiniSQLParser.Parse("UPDATE    Table   SET    Col1='Val1'  ,   Col2=10   WHERE    Col3 = 'Val3'");
+            var query2 = MiniSQLParser.Parse("UPDATE    Table   SET    Col1='Val1'  ,   Col2='10'   WHERE    Col3 = 'Val3'");
             Assert.Null(query2);
         }
 
@@ -28,14 +28,14 @@ namespace ParsingTests
         [Fact]
         public void IntValues()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10,Col2=20 WHERE Col3=30") as DbManager.Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='10',Col2='20' WHERE Col3='30'") as DbManager.Update;
             Assert.NotNull(query);
         }
 
         [Fact]
         public void IntValue()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10 WHERE Col3=30") as DbManager.Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='10' WHERE Col3='30'") as DbManager.Update;
             Assert.NotNull(query);
         }
 
@@ -45,7 +45,7 @@ namespace ParsingTests
             var query = MiniSQLParser.Parse("UPDATE Table SET Col1 = Val1 WHERE Col3 = Val3");
             Assert.Null(query);
             var query2 = MiniSQLParser.Parse("UPDATE Table SET Col1='Val1'WHERE Col3='Val3'");
-            Assert.Null(query2); // Requires spaces
+            Assert.Null(query2);
         }
 
         [Fact]
@@ -58,14 +58,14 @@ namespace ParsingTests
         [Fact]
         public void DoubleValue()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10.5 WHERE Col3=30.5") as DbManager.Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='10.5' WHERE Col3='30.5'") as DbManager.Update;
             Assert.NotNull(query);
         }
 
         [Fact]
         public void DoubleValues()
         {
-            var query = MiniSQLParser.Parse("UPDATE Table SET Col1=10.5,Col2=20.5 WHERE Col3=30.5") as DbManager.Update;
+            var query = MiniSQLParser.Parse("UPDATE Table SET Col1='10.5',Col2='20.5' WHERE Col3='30.5'") as DbManager.Update;
             Assert.NotNull(query);
         }
     }
@@ -77,7 +77,10 @@ namespace ParsingTests
         {
             Assert.Null(MiniSQLParser.Parse("Create TABLE Tab1 (Col1 INT)"));
             Assert.Null(MiniSQLParser.Parse("CREATE TABLE (Col1 INT)"));
-            Assert.Null(MiniSQLParser.Parse("CREATE TABLE Tab1 ()"));
+            
+            var query = MiniSQLParser.Parse("CREATE TABLE Tab1 ()") as DbManager.CreateTable;
+            Assert.NotNull(query);
+            Assert.Empty(query.ColumnsParameters);
         }
 
         [Fact]
@@ -104,7 +107,7 @@ namespace ParsingTests
         [Fact]
         public void CorrectWithMultipleColumns()
         {
-            var query = MiniSQLParser.Parse("CREATE TABLE Tab1 (Col1 INT,Col2 STRING)") as DbManager.CreateTable;
+            var query = MiniSQLParser.Parse("CREATE TABLE Tab1 (Col1 INT,Col2 TEXT)") as DbManager.CreateTable;
             Assert.NotNull(query);
             Assert.Equal(2, query.ColumnsParameters.Count);
         }
@@ -162,7 +165,7 @@ namespace ParsingTests
         [Fact]
         public void SimpleIntValues()
         {
-            var query = MiniSQLParser.Parse("INSERT INTO Tab1 VALUES (10,20)") as DbManager.Insert;
+            var query = MiniSQLParser.Parse("INSERT INTO Tab1 VALUES ('10','20')") as DbManager.Insert;
             Assert.NotNull(query);
         }
 
@@ -176,13 +179,13 @@ namespace ParsingTests
         [Fact]
         public void IncorrectSpacesOrMissingCommas()
         {
-            Assert.Null(MiniSQLParser.Parse("INSERT INTO Tab1 VALUES (10 20)"));
+            Assert.Null(MiniSQLParser.Parse("INSERT INTO Tab1 VALUES ('10' '20')"));
         }
 
         [Fact]
         public void SimpleDoubleValues()
         {
-            var query = MiniSQLParser.Parse("INSERT INTO Tab1 VALUES (10.5,20.5)") as DbManager.Insert;
+            var query = MiniSQLParser.Parse("INSERT INTO Tab1 VALUES ('10.5','20.5')") as DbManager.Insert;
             Assert.NotNull(query);
         }
 
@@ -199,27 +202,27 @@ namespace ParsingTests
         [Fact]
         public void IncorrectSpaces()
         {
-            Assert.Null(MiniSQLParser.Parse("DELETEFROM Table WHERE Col1=10"));
+            Assert.Null(MiniSQLParser.Parse("DELETEFROM Table WHERE Col1='10'"));
         }
 
         [Fact]
         public void SimpleDoubleCondition()
         {
-            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1=10.5") as DbManager.Parser.Delete;
+            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1='10.5'") as DbManager.Parser.Delete;
             Assert.NotNull(query);
         }
 
         [Fact]
         public void SimpleIntCondition()
         {
-            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1=10") as DbManager.Parser.Delete;
+            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1='10'") as DbManager.Parser.Delete;
             Assert.NotNull(query);
         }
 
         [Fact]
         public void IncorrectCapitalizationOrMissingCommasInLiterals()
         {
-            Assert.Null(MiniSQLParser.Parse("Delete FROM Table WHERE Col1 = 10"));
+            Assert.Null(MiniSQLParser.Parse("Delete FROM Table WHERE Col1 = '10'"));
         }
 
         [Fact]
@@ -232,7 +235,7 @@ namespace ParsingTests
         [Fact]
         public void CorrectWithSpaces()
         {
-            var query = MiniSQLParser.Parse("DELETE   FROM    Table    WHERE   Col1  =  10");
+            var query = MiniSQLParser.Parse("DELETE   FROM    Table    WHERE   Col1  =  '10'");
             Assert.Null(query);
         }
     }
