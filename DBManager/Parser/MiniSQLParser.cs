@@ -21,7 +21,7 @@ namespace DbManager
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
 
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?:INT|DOUBLE|STRING))*)\s*\)\s*$";
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s*\(\s*(?<columns>\w+\s+(?i:INT|DOUBLE|STRING)(?:\s*,\s*\w+\s+(?i:INT|DOUBLE|STRING))*)\s*\)\s*$";
 
             const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:\s*,\s*\w+\s*=\s*(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>.+)\s*$";
             
@@ -76,7 +76,7 @@ namespace DbManager
                         string operatorString = conditionMatch.Groups["operator"].Value;
                         string valueString = conditionMatch.Groups["value"].Value;
 
-                        condition = new Condition(colname, operatorString, valueString);
+                        condition = new Condition(colname, operatorString, StripQuotes(valueString));
                     }
                     else return null;
                 }
@@ -92,6 +92,11 @@ namespace DbManager
                 List<string> values = CommaSeparatedNames(insertMatch.Groups["values"].Value);
                 if (values == null) return null;
 
+                for (int i = 0; i < values.Count; i++)
+                {
+                    values[i] = StripQuotes(values[i]);
+                }
+                
                 return new Insert(tableString, values);
             }
 
@@ -175,7 +180,7 @@ namespace DbManager
                     if (setValueMatch.Success)
                     {
                         string colName = setValueMatch.Groups["colname"].Value;
-                        string value = setValueMatch.Groups["value"].Value;
+                        string value = StripQuotes(setValueMatch.Groups["value"].Value);
 
                         setValue = new SetValue(colName, value);
 
@@ -196,8 +201,9 @@ namespace DbManager
                         string operatorString = conditionMatch.Groups["operator"].Value;
                         string valueString = conditionMatch.Groups["value"].Value;
 
-                        condition = new Condition(colname, operatorString, valueString);
+                        condition = new Condition(colname, operatorString, StripQuotes(valueString));
                     }
+                    else return null;
                 }
 
                 return new Update(tableString, assignmentsSetValue, condition);
@@ -222,8 +228,9 @@ namespace DbManager
                         string operatorString = conditionMatch.Groups["operator"].Value;
                         string valueString = conditionMatch.Groups["value"].Value;
 
-                        condition = new Condition(colname, operatorString, valueString);
+                        condition = new Condition(colname, operatorString, StripQuotes(valueString));
                     }
+                    else return null;
                 }
 
                 return new Delete(tableString, condition);
@@ -302,6 +309,14 @@ namespace DbManager
             }
             return commaSeparator;
         }
-        
+
+        static string StripQuotes(string value)
+        {
+            if (value != null && value.StartsWith("'") && value.EndsWith("'") && value.Length >= 2)
+            {
+                return value.Substring(1, value.Length - 2);
+            }
+            return value;
+        }
     }
 }

@@ -34,14 +34,14 @@ namespace DbManager
 
             foreach(string column in Columns)
             {
-                if(table.ColumnByName(column)==null)
+                if(column != "*" && table.ColumnByName(column)==null)
                 {
                     return Constants.ColumnDoesNotExistError;
                 }
             }
             if(Where!=null)
             {
-                if (Where.ColumnName==null||(table.ColumnByName(Where.ColumnName)==null))
+                if (string.IsNullOrEmpty(Where.ColumnName) || table.ColumnByName(Where.ColumnName) == null)
                 {
                    return Constants.ColumnDoesNotExistError; 
                 }

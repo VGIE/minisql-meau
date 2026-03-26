@@ -16,7 +16,15 @@ namespace DbManager
         {
             //TODO DEADLINE 2: Initialize member variables
             this.Table= table;
-            this.ColumnsParameters=columns;
+            
+            if (columns == null)
+            {
+                this.ColumnsParameters = new List<ColumnDefinition>();
+            }
+            else
+            {
+                this.ColumnsParameters = columns;
+            }
             
         }
         public string Execute(Database database)
@@ -24,20 +32,39 @@ namespace DbManager
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //CreateTableSuccess or the last error in the database
             
-            if(database== null) 
+            if (database == null) 
+            {
+                return Constants.Error;
+            }
+
+            if (database.TableByName(Table) != null) 
+            {
+                return Constants.TableAlreadyExistsError;
+            }
+
+            if (this.ColumnsParameters == null || this.ColumnsParameters.Count == 0)
+            {
+                return Constants.DatabaseCreatedWithoutColumnsError;
+            }    
+                
+
+            List<string> names = new List<string>();
+            foreach (ColumnDefinition col in ColumnsParameters)
+            {
+                if (names.Contains(col.Name))
+                {
+                    return Constants.Error + ": Column name dup: " + col.Name;
+                }
+                names.Add(col.Name);
+            }
+            
+            if (database.CreateTable(this.Table, this.ColumnsParameters))
+            {
+                return Constants.CreateTableSuccess;
+            }
+            
             return Constants.Error;
-            Table tabla = database.TableByName(Table);
-           
-            if(tabla!=null) 
-            return Constants.TableAlreadyExistsError;
             
-            if(ColumnsParameters==null||ColumnsParameters.Count==0) 
-            return Constants.DatabaseCreatedWithoutColumnsError;
-            
-            if(database.CreateTable(Table,ColumnsParameters))
-            return Constants.CreateTableSuccess;
-            
-            return Constants.Error;
         }
 
     }
