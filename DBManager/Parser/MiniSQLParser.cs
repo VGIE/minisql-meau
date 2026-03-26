@@ -76,7 +76,7 @@ namespace DbManager
                         string operatorString = conditionMatch.Groups["operator"].Value;
                         string valueString = conditionMatch.Groups["value"].Value;
 
-                        condition = new Condition(colname, operatorString, StripQuotes(valueString));
+                        condition = new Condition(colname, operatorString, StripQuote(valueString));
                     }
                     else return null;
                 }
@@ -94,7 +94,7 @@ namespace DbManager
 
                 for (int i = 0; i < values.Count; i++)
                 {
-                    values[i] = StripQuotes(values[i]);
+                    values[i] = StripQuote(values[i]);
                 }
                 
                 return new Insert(tableString, values);
@@ -180,7 +180,7 @@ namespace DbManager
                     if (setValueMatch.Success)
                     {
                         string colName = setValueMatch.Groups["colname"].Value;
-                        string value = StripQuotes(setValueMatch.Groups["value"].Value);
+                        string value = StripQuote(setValueMatch.Groups["value"].Value);
 
                         setValue = new SetValue(colName, value);
 
@@ -206,7 +206,7 @@ namespace DbManager
                             return null;
                         }
 
-                        condition = new Condition(colname, operatorString, StripQuotes(valueString));
+                        condition = new Condition(colname, operatorString, StripQuote(valueString));
                     }
                     else return null;
                 }
@@ -238,7 +238,7 @@ namespace DbManager
                             return null;
                         }
 
-                        condition = new Condition(colname, operatorString, StripQuotes(valueString));
+                        condition = new Condition(colname, operatorString, StripQuote(valueString));
                     }
                     else return null;
                 }
@@ -320,7 +320,7 @@ namespace DbManager
             return commaSeparator;
         }
 
-        static string StripQuotes(string value)
+        static string StripQuote(string value)
         {
             if (value != null && value.StartsWith("'") && value.EndsWith("'") && value.Length >= 2)
             {
