@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DbManager
 {
-    // Maialen
+    // Maialen revisar 
     public class DropTable: MiniSqlQuery
     {
         public string Table { get; private set; }
