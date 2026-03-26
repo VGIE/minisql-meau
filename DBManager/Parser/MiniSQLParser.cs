@@ -15,31 +15,31 @@ namespace DbManager
 
             RegexOptions options = RegexOptions.Singleline;
 
-            const string selectPattern = @"^SELECT\s+(?<columns>(?:\w+|\*)(?:,(?:\w+|\*))*)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>\S.+))?\s*$";
-            
-            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\(\s*(?<values>(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s*\)\s*$";
-            
-            const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>\w+)\s*$";
+            const string selectPattern = @"^SELECT\s+(?<columns>\*|[a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+(?<table>[a-zA-Z0-9]+)$";
 
-            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s+\(\s*(?<columns>\w+\s+(?:INT|DOUBLE|STRING)(?:,\w+\s+(?:INT|DOUBLE|STRING))*)\)\s*$";
+            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>('[-]?\d+(\.\d+)?'|'[^']+')(?:,('[-]?\d+(\.\d+)?'|'[^']+'))*)\)$";
 
-            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>\S.+)\s*$";
-            
-            const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>\S.+)\s*$";
-            
+            const string dropTablePattern = @"^DROP\s+TABLE\s+(?<table>[a-zA-Z0-9]+)$";
+
+            const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s+\((?<columns>\w+\s+(?:INT|DOUBLE|TEXT)(?:,\w+\s+(?:INT|DOUBLE|TEXT))*)?\)$";
+
+            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+=('[-]?\d+(\.\d+)?'|'[^']+')(?:,(\w+=('[-]?\d+(\.\d+)?'|'[^']+'))*)?)\s+WHERE\s+(?<condition>(\w+)(=|<|>)('[-]?\d+(\.\d+)?'|'[^']+'))$";
+
+            const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>(\w+)(=|<|>)('-?\d+(\.\d+)?'|'[^']+'))$";
+
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+(?<secprofile>[a-zA-Z]+)\s*$";
-            
-            const string dropSecurityProfilePattern = @"^DROP\s+SECURITY\s+PROFILE\s+(?<secprofile>[a-zA-Z]+)\s*$";
+            const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+(?<secprofile>[a-zA-Z0-9]+)$";
 
-            const string grantPattern = @"^GRANT\s+(?<privilege>DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(?<table>\w+)\s+TO\s+(?<secprofile>[a-zA-Z]+)\s*$";
-            
-            const string revokePattern = @"^REVOKE\s+(?<privilege>DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(?<table>\w+)\s+TO\s+(?<secprofile>[a-zA-Z]+)\s*$";
-            
-            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+),(?<password>[^,]+),(?<secprofile>[a-zA-Z]+)\)\s*$";
-            
-            const string deleteUserPattern = @"^DELETE\s+USER\s+(?<user>[a-zA-Z]+)\s*$";
+            const string dropSecurityProfilePattern = @"^DROP\s+SECURITY\s+PROFILE\s+(?<secprofile>[a-zA-Z0-9]+)$";
+
+            const string grantPattern = @"^GRANT\s+(?<privilege>SELECT|INSERT|UPDATE|DELETE)\s+ON\s+(?<table>[a-zA-Z0-9]+)\s+TO\s+(?<secprofile>[a-zA-Z0-9]+)$";
+
+            const string revokePattern = @"^REVOKE\s+(?<privilege>SELECT|INSERT|UPDATE|DELETE)\s+ON\s+(?<table>[a-zA-Z0-9]+)\s+TO\s+(?<secprofile>[a-zA-Z0-9]+)$";
+
+            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z0-9]+),\s*(?<password>[a-zA-Z0-9]+),\s*(?<secprofile>[a-zA-Z0-9]+)\)$";
+
+            const string deleteUserPattern = @"^DELETE\s+USER\s+(?<user>[a-zA-Z0-9]+)$";
 
 
             //TODO DEADLINE 2
@@ -50,10 +50,10 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            const string conditionPattern = @"^\s*(?<colname>\w+)(?<operator>[<>=]+)(?<value>'[^']*'|-?[0-9]+(?:\.[0-9]+)?)\s*$";
-            const string columnDefinitionPattern = @"^\s*(?<colname>\w+)\s+(?<type>STRING|INT|DOUBLE)\s*$";
-            const string setValuePattern = @"^(?<colname>\w+)=(?<value>.+)\s*$";
-            
+            const string conditionPattern = @"^\s*(?<colname>\w+)(?<operator>[<>=])(?<value>'[-]?\d+(\.\d+)?'|'[^']+'|[-]?\d+(\.\d+)?)\s*$";
+            const string columnDefinitionPattern = @"^\s*(?<colname>\w+)\s+(?<type>INT|DOUBLE|TEXT)\s*$";
+            const string setValuePattern = @"^(?<colname>\w+)=(?<value>'[-]?\d+(\.\d+)?'|'[^']+')\s*$";
+
             // SELECT
             Match selectMatch = Regex.Match(miniSQLQuery, selectPattern, options);
             if (selectMatch.Success)
