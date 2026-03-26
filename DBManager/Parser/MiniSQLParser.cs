@@ -15,7 +15,7 @@ namespace DbManager
 
             RegexOptions options = RegexOptions.Singleline;
 
-            const string selectPattern = @"^SELECT\s+(?<columns>(?:\w+|\*)(?:,(?:\w+|\*))*)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>.+))?\s*$";
+            const string selectPattern = @"^SELECT\s+(?<columns>(?:\w+|\*)(?:,(?:\w+|\*))*)\s+FROM\s+(?<table>\w+)(?:\s+WHERE\s+(?<condition>\S.+))?\s*$";
             
             const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\(\s*(?<values>(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s*\)\s*$";
             
@@ -23,9 +23,9 @@ namespace DbManager
 
             const string createTablePattern = @"^CREATE\s+TABLE\s+(?<table>\w+)\s+\(\s*(?<columns>\w+\s+(?i:INT|DOUBLE|STRING)(?:,\w+\s+(?i:INT|DOUBLE|STRING))*)\)\s*$";
 
-            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>.+)\s*$";
+            const string updateTablePattern = @"^UPDATE\s+(?<table>\w+)\s+SET\s+(?<assignments>\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?)(?:,\w+=(?:'[^']*'|-?[0-9]+(?:\.[0-9]+)?))*)\s+WHERE\s+(?<condition>\S.+)\s*$";
             
-            const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>.+)\s*$";
+            const string deletePattern = @"^DELETE\s+FROM\s+(?<table>\w+)\s+WHERE\s+(?<condition>\S.+)\s*$";
             
 
             //TODO DEADLINE 4
