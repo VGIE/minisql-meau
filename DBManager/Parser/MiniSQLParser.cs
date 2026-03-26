@@ -201,6 +201,11 @@ namespace DbManager
                         string operatorString = conditionMatch.Groups["operator"].Value;
                         string valueString = conditionMatch.Groups["value"].Value;
 
+                        if (valueString.StartsWith("'") && !valueString.EndsWith("'"))
+                        {
+                            return null;
+                        }
+
                         condition = new Condition(colname, operatorString, StripQuotes(valueString));
                     }
                     else return null;
@@ -227,6 +232,11 @@ namespace DbManager
                         string colname = conditionMatch.Groups["colname"].Value;
                         string operatorString = conditionMatch.Groups["operator"].Value;
                         string valueString = conditionMatch.Groups["value"].Value;
+
+                        if (valueString.StartsWith("'") && !valueString.EndsWith("'"))
+                        {
+                            return null;
+                        }
 
                         condition = new Condition(colname, operatorString, StripQuotes(valueString));
                     }
