@@ -52,7 +52,15 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            
+            if(profileName==null || table==null)
+            {
+                return ;
+            }
+            Profile profile = ProfileByUser(profileName);
+            if (profile != null)
+            {
+                profile.GrantPrivilege(table, privilege);
+            }     
         }
 
         // Unai
