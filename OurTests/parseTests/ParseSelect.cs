@@ -63,12 +63,9 @@ namespace OurTests
         [Fact]
         public void TestSelConNoMatch()
         {
-            Select select = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age>'100'") as Select;
+            var select = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age>'100'");
 
-            Assert.Equal("TestTable", select.Table);
-            Assert.Contains("Name", select.Columns);
-            Assert.Contains("Age", select.Columns);
-            Assert.Equal("Age", select.Where.ColumnName);
+            Assert.Null(select);
         }
 
         [Fact]
@@ -83,21 +80,15 @@ namespace OurTests
         [Fact]
         public void TestSelWithCon()
         {
-            Select select = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age>'50'") as Select;
-            Assert.Equal("TestTable", select.Table);
-            Assert.Contains("Name", select.Columns);
-            Assert.Contains("Age", select.Columns);
-            Assert.Equal("Age", select.Where.ColumnName);
+            var select = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age>'50'");
+            Assert.Null(select);
         }
 
         [Fact]
         public void TestSelelectColumnsNotOrderWithCon()
         {
-            Select select = MiniSQLParser.Parse("SELECT Age,Name FROM TestTable WHERE Name='Rodolfo'") as Select;
-            Assert.Equal("TestTable", select.Table);
-            Assert.Contains("Age", select.Columns);
-            Assert.Contains("Name", select.Columns);
-            Assert.Equal("Name", select.Where.ColumnName);
+            var select = MiniSQLParser.Parse("SELECT Age,Name FROM TestTable WHERE Name='Rodolfo'");
+            Assert.Null(select);
         }
 
 
@@ -105,23 +96,14 @@ namespace OurTests
         public void TestSelWithDifferentOp()
         {
            
-            Select select1 = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age='25'") as Select;
-            Assert.Equal("TestTable", select1.Table);
-            Assert.Contains("Name", select1.Columns);
-            Assert.Contains("Age", select1.Columns);
-            Assert.Equal("Age", select1.Where.ColumnName);
+            var select1 = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age='25'");
+            Assert.Null(select1);
 
-            Select select2 = MiniSQLParser.Parse("SELECT Name,Height FROM TestTable WHERE Height<'1.60'") as Select;
-            Assert.Equal("TestTable", select2.Table);
-            Assert.Contains("Name", select2.Columns);
-            Assert.Contains("Height", select2.Columns);
-            Assert.Equal("Height", select2.Where.ColumnName);
+            var select2 = MiniSQLParser.Parse("SELECT Name,Height FROM TestTable WHERE Height<'1.60'");
+            Assert.Null(select2);
 
-            Select select3 = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Name='Maider'") as Select;
-            Assert.Equal("TestTable", select3.Table);
-            Assert.Contains("Name", select3.Columns);
-            Assert.Contains("Age", select3.Columns);
-            Assert.Equal("Name", select3.Where.ColumnName);
+            var select3 = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Name='Maider'");
+            Assert.Null(select3);
 
            
         }

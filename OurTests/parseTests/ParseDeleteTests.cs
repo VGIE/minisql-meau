@@ -28,7 +28,7 @@ namespace OurTests.parseTests
         [Fact]
         public void CorrectWithSpaces()
         {
-            var query = MiniSQLParser.Parse("DELETE  FROM Table WHERE Col1 = 10");
+            var query = MiniSQLParser.Parse("DELETE  FROM Table WHERE Col1 = '10'");
             Assert.Null(query);
         }
         [Fact]
@@ -40,24 +40,24 @@ namespace OurTests.parseTests
         [Fact]
         public void SimpleIntCondition()
         {
-            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1=10") as DbManager.Parser.Delete;
+            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1='10'") as DbManager.Parser.Delete;
             Assert.NotNull (query);
         }
         [Fact]
         public void SimpleDoubleCondition()
         {
-            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1=10.5") as DbManager.Parser.Delete;
+            var query = MiniSQLParser.Parse("DELETE FROM Table WHERE Col1='10.5'") as DbManager.Parser.Delete;
             Assert.NotNull(query);
         }
         [Fact]
         public void IncorrectSpaces()
         {
-            Assert.Null(MiniSQLParser.Parse("DELETEFROM Table WHERE Col1 =10"));
+            Assert.Null(MiniSQLParser.Parse("DELETEFROM Table WHERE Col1 ='10'"));
         }
         [Fact]
         public void IncorrectCapitalization()
         {
-            Assert.Null(MiniSQLParser.Parse("Delete FROM Table WHERE Col1 = 10"));
+            Assert.Null(MiniSQLParser.Parse("Delete FROM Table WHERE Col1 = '10'"));
 
         }
     }
