@@ -43,7 +43,17 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
             
-            return false;
+            User obj = UserByName(username);
+
+            if (obj.EncryptedPassword == Encryption.Encrypt(password))
+            {
+               return true;
+            }
+            else
+            {
+                return false;
+            }
+            
             
         }
 
@@ -114,7 +124,16 @@ namespace DbManager.Security
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
-            
+             foreach(Profile p in Profiles)
+            {
+                foreach(User u in p.Users)
+                {
+                    if (username.Equals(u.Username))
+                    {
+                        return u;
+                    }
+                }
+            }
             return null;
             
         }
@@ -123,7 +142,7 @@ namespace DbManager.Security
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-            
+           
             return null;
             
         }
