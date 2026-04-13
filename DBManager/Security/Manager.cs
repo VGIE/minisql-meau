@@ -152,7 +152,11 @@ namespace DbManager.Security
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-           
+           foreach(var p in Profiles)
+            {
+                if(p.Name==profileName)
+                    return p;
+            }
             return null;
             
         }
