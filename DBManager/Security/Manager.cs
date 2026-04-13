@@ -88,7 +88,7 @@ namespace DbManager.Security
 
             if (profile != null)
             {
-                profile.GrantPrivilege(table, privilege);
+                profile.RevokePrivilege(table, privilege);
             }
         }
 
