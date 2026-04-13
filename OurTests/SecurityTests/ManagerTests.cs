@@ -43,5 +43,47 @@ namespace OurTests.SecurityTests
 
             Assert.True(true);
         }
+
+        [Fact]
+        public void TestProfileByUser()
+        {
+            Manager manager = new Manager("Admin");
+            string profileName = "Developers";
+            string targetUser = "Unai";
+
+            Profile profile = new Profile { Name = profileName };
+            User user = new User(targetUser, "pass");
+            profile.Users.Add(user);
+
+            manager.Profiles.Add(profile);
+
+            Profile result = manager.ProfileByUser(targetUser);
+
+            Assert.NotNull(result);
+            Assert.Equal(profileName, result.Name);
+        }
+
+        [Fact]
+        public void TestProfileByUserUserDoesNotExist()
+        {
+            Manager manager = new Manager("Admin");
+            Profile profile = new Profile { Name = "Unai" };
+            profile.Users.Add(new User("existingUser", "pass"));
+            manager.Profiles.Add(profile);
+
+            Profile result = manager.ProfileByUser("nonExistentUser");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void TestProfileByUserNullUsername()
+        {
+            Manager manager = new Manager("Admin");
+
+            Profile result = manager.ProfileByUser(null);
+
+            Assert.Null(result);
+        }
     }
 }
