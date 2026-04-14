@@ -78,9 +78,18 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
+
+            if (profileName == null || table == null)
+            {
+                return;
+            }
+
             Profile profile = ProfileByName(profileName);
 
-
+            if (profile != null)
+            {
+                profile.RevokePrivilege(table, privilege);
+            }
         }
 
         // Aitana
