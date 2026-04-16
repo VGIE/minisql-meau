@@ -85,5 +85,38 @@ namespace OurTests.SecurityTests
 
             Assert.Null(result);
         }
+
+        [Fact]
+        public void TestLoad()
+        {
+            string dbName = "TestDatabase";
+            string testUser = "admin_user";
+            string securityContent = "admin,1234,AdminProfile,UsersTable,Select/Insert";
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), dbName);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+            string filePath = Path.Combine(path, "security.dat");
+            File.WriteAllText(filePath, securityContent);
+
+            try
+            {
+                Manager result = Manager.Load(dbName, testUser);
+
+                Assert.NotNull(result);
+
+                Profile profile = result.ProfileByName("AdminProfile");
+                Assert.NotNull(profile);
+                Assert.Equal("AdminProfile", profile.Name);
+
+                Assert.True(profile.IsGrantedPrivilege("UsersTable", Privilege.Select));
+                Assert.True(profile.IsGrantedPrivilege("UsersTable", Privilege.Insert));
+                Assert.False(profile.IsGrantedPrivilege("UsersTable", Privilege.Delete));
+            }
+            finally
+            {
+                if (Directory.Exists(path)) Directory.Delete(path, true);
+            }
+        }
     }
 }

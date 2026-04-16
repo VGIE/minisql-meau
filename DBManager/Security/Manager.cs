@@ -228,15 +228,63 @@ namespace DbManager.Security
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
-            
-            return null;
+            try
+            {
+                Manager manager = new Manager(username);
+
+                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.dat");
+                if (!File.Exists(path))
+                {
+                    return null;
+                }
+
+                using (TextReader tr = File.OpenText(path))
+                {
+                    string line;
+                    while ((line = tr.ReadLine()) != null)
+                    {
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        string[] parts = line.Split(',');
+
+                        if (parts.Length >= 5)
+                        {
+                            string uName = parts[0].Trim();
+                            string uPass = parts[1].Trim();
+                            string pName = parts[2].Trim();
+                            string pTable = parts[3].Trim();
+                            string allUserPrivileges = parts[4].Trim();
+
+                            Profile profile = manager.ProfileByName(pName);
+                            if (profile == null)
+                            {
+                                profile = new Profile { Name = pName };
+                                manager.AddProfile(profile);
+                            }
+
+                            string[] uPrivileges = allUserPrivileges.Split('/');
+
+                            foreach (string priv in uPrivileges)
+                            {
+                                Privilege privilege = (Privilege) Enum.Parse(typeof(Privilege), priv);
+                                profile.GrantPrivilege(pTable, privilege);
+                            }
+                        }
+                    }
+                }
+                return manager;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
             
         }
 
         // Endika
         public void Save(string databaseName)
         {
-            //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
+            //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database. uName, uPass, pName, pTable, Privilege1/Privilege2...
             
         }
     }
