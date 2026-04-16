@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace DbManager.Security
@@ -215,7 +217,15 @@ namespace DbManager.Security
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            
+            string folder = databaseName;
+            string path = Path.Combine(databaseName, "security.json");
+            Directory.CreateDirectory(folder);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+            string json= JsonSerializer.Serialize(Profiles, options);
+            File.WriteAllText(path, json);
         }
     }
 }
