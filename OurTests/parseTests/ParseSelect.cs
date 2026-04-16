@@ -65,7 +65,7 @@ namespace OurTests
         {
             var select = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age>'100'");
 
-            Assert.Null(select);
+            Assert.NotNull(select);
         }
 
         [Fact]
@@ -81,14 +81,14 @@ namespace OurTests
         public void TestSelWithCon()
         {
             var select = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age>'50'");
-            Assert.Null(select);
+            Assert.NotNull(select);
         }
 
         [Fact]
         public void TestSelelectColumnsNotOrderWithCon()
         {
             var select = MiniSQLParser.Parse("SELECT Age,Name FROM TestTable WHERE Name='Rodolfo'");
-            Assert.Null(select);
+            Assert.NotNull(select);
         }
 
 
@@ -97,13 +97,13 @@ namespace OurTests
         {
            
             var select1 = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Age='25'");
-            Assert.Null(select1);
+            Assert.NotNull(select1);
 
             var select2 = MiniSQLParser.Parse("SELECT Name,Height FROM TestTable WHERE Height<'1.60'");
-            Assert.Null(select2);
+            Assert.NotNull(select2);
 
             var select3 = MiniSQLParser.Parse("SELECT Name,Age FROM TestTable WHERE Name='Maider'");
-            Assert.Null(select3);
+            Assert.NotNull(select3);
 
            
         }
