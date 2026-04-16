@@ -152,6 +152,7 @@ namespace OurTests.SecurityTests
             managerAdmin.Profiles.Add(adminProfile);
 
             Assert.True(managerAdmin.IsUserAdmin());
+        }
 
         [Fact]
         public void TestUsrByNameCorrect()
@@ -181,7 +182,7 @@ namespace OurTests.SecurityTests
         {
             Profile fProfile = manager.ProfileByName("NonExistentProfile");            
             Assert.Null(fProfile);
-        }
+        
             User user = new User("user", "1234");
 
             Profile normalProfile = new Profile();
@@ -194,7 +195,135 @@ namespace OurTests.SecurityTests
             Assert.False(managerUser.IsUserAdmin());
         }
 
-       
+
+
+
+
+        [Fact]
+        public void TestIsGrantedPrivilege()
+        {
+            Manager emptyManager = new Manager("admin");
+
+            Assert.False(emptyManager.IsGrantedPrivilege(null, "Users", Privilege.Select));
+            Assert.False(emptyManager.IsGrantedPrivilege("user", null, Privilege.Select));
+            Assert.False(emptyManager.IsGrantedPrivilege("unknown", "Users", Privilege.Select));
+
+            User admin = new User("admin", "1234");
+
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(admin);
+
+            Manager adminManager = new Manager("admin");
+            adminManager.Profiles.Add(adminProfile);
+
+            Assert.True(adminManager.IsGrantedPrivilege("admin", "AnyTable", Privilege.Select));
+            Assert.True(adminManager.IsGrantedPrivilege("admin", "AnyTable", Privilege.Insert));
+            Assert.True(adminManager.IsGrantedPrivilege("admin", "AnyTable", Privilege.Update));
+            Assert.True(adminManager.IsGrantedPrivilege("admin", "AnyTable", Privilege.Delete));
+
+            User user = new User("user", "1234");
+
+            Profile userProfile = new Profile();
+            userProfile.Name = "Players";
+            userProfile.Users.Add(user);
+            userProfile.GrantPrivilege("Users", Privilege.Select);
+
+            Manager normalManager = new Manager("admin");
+            normalManager.Profiles.Add(userProfile);
+
+            Assert.True(normalManager.IsGrantedPrivilege("user", "Users", Privilege.Select));
+            Assert.False(normalManager.IsGrantedPrivilege("user", "Users", Privilege.Delete));
+            Assert.False(normalManager.IsGrantedPrivilege("user", "NoTable", Privilege.Select));
+        }
+
+        [Fact]
+        public void TestAddProfile()
+        {
+            User admin = new User("admin", "1234");
+
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(admin);
+
+            Manager adminManager = new Manager("admin");
+            adminManager.Profiles.Add(adminProfile);
+
+            Profile newProfile = new Profile();
+            newProfile.Name = "Players";
+
+            adminManager.AddProfile(newProfile);
+
+            Assert.NotNull(adminManager.ProfileByName("Players"));
+            Assert.Equal(2, adminManager.Profiles.Count);
+
+            int countBeforeNull = adminManager.Profiles.Count;
+            adminManager.AddProfile(null);
+            Assert.Equal(countBeforeNull, adminManager.Profiles.Count);
+
+            Profile duplicateProfile = new Profile();
+            duplicateProfile.Name = "Players";
+
+            adminManager.AddProfile(duplicateProfile);
+
+            Assert.Equal(1, adminManager.Profiles.Count(p => p.Name == "Players"));
+
+            User user = new User("user", "1234");
+
+            Profile normalProfile = new Profile();
+            normalProfile.Name = "Users";
+            normalProfile.Users.Add(user);
+
+            Manager userManager = new Manager("user");
+            userManager.Profiles.Add(normalProfile);
+
+            Profile anotherProfile = new Profile();
+            anotherProfile.Name = "AnotherProfile";
+
+            userManager.AddProfile(anotherProfile);
+
+            Assert.Null(userManager.ProfileByName("AnotherProfile"));
+            Assert.Single(userManager.Profiles);
+        }
+
+        [Fact]
+        public void TestRemoveProfile()
+        {
+            User admin = new User("admin", "1234");
+
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(admin);
+
+            Profile playersProfile = new Profile();
+            playersProfile.Name = "Players";
+
+            Manager adminManager = new Manager("admin");
+            adminManager.Profiles.Add(adminProfile);
+            adminManager.Profiles.Add(playersProfile);
+
+            Assert.True(adminManager.RemoveProfile("Players"));
+            Assert.Null(adminManager.ProfileByName("Players"));
+
+            Assert.False(adminManager.RemoveProfile("NoProfile"));
+
+            User user = new User("user", "1234");
+
+            Profile normalProfile = new Profile();
+            normalProfile.Name = "Users";
+            normalProfile.Users.Add(user);
+
+            Profile testProfile = new Profile();
+            testProfile.Name = "TestProfile";
+
+            Manager userManager = new Manager("user");
+            userManager.Profiles.Add(normalProfile);
+            userManager.Profiles.Add(testProfile);
+
+            Assert.False(userManager.RemoveProfile("TestProfile"));
+            Assert.NotNull(userManager.ProfileByName("TestProfile"));
+        }
+
     }
 }
 

@@ -117,9 +117,7 @@ namespace DbManager.Security
 
             return profile.IsGrantedPrivilege(table, privilege);
 
-
-
-        }
+            }
 
         // Aitana
         public void AddProfile(Profile profile)
