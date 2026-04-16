@@ -259,7 +259,22 @@ namespace DbManager.Security
                             if (profile == null)
                             {
                                 profile = new Profile { Name = pName };
-                                manager.AddProfile(profile);
+                                manager.Profiles.Add(profile);
+                            }
+
+                            bool userExists = false;
+                            foreach (User u in profile.Users)
+                            {
+                                if (u.Username == uName)
+                                {
+                                    userExists = true;
+                                    break;
+                                }
+                            }
+
+                            if (!userExists)
+                            {
+                                profile.Users.Add(new User(uName, uPass));
                             }
 
                             string[] uPrivileges = allUserPrivileges.Split('/');
