@@ -12,6 +12,16 @@ namespace OurTests.SecurityTests
 {
     public class ManagerTests
     {
+        private Manager manager;
+
+        public ManagerTests(){
+            manager = new Manager("admin");
+            Profile userProfile = new Profile { Name = "UserPrf" };
+            userProfile.Users.Add(new User("admin", "pass123"));
+            manager.Profiles.Add(userProfile);
+        }
+    
+
         [Fact]
         public void TestRevokePrivilege()
         {
@@ -42,6 +52,48 @@ namespace OurTests.SecurityTests
             manager.RevokePrivilege("RandomProfile", "RandomTable", Privilege.Delete);
 
             Assert.True(true);
+        }
+
+        [Fact]
+        public void TestIsPassCorrTrue()
+        {
+            Assert.True(manager.IsPasswordCorrect("admin","pass123"));
+        }
+
+        [Fact]
+        public void TestIsPassCorrFalse()
+        {
+            Assert.False(manager.IsPasswordCorrect("admin","wrongpassword"));
+        }
+
+        [Fact]
+        public void TestUsrByNameCorrect()
+        {
+            User fUser = manager.UserByName("admin");
+            Assert.NotNull(fUser);
+            Assert.Equal("admin",fUser.Username);
+        }
+
+        [Fact]
+        public void TestUsrByNameNoCorrect()
+        {
+            User fUser = manager.UserByName("unknownUser");
+            Assert.Null(fUser);
+        }
+
+        [Fact]
+        public void TestProfrByNameCorrect()
+        {
+            Profile fProfile = manager.ProfileByName("UserPrf");
+            Assert.NotNull(fProfile);
+            Assert.Equal("UserPrf",fProfile.Name);
+        }
+
+        [Fact]
+        public void TestProfrByNameNoCorrect()
+        {
+            Profile fProfile = manager.ProfileByName("NonExistentProfile");            
+            Assert.Null(fProfile);
         }
     }
 }
