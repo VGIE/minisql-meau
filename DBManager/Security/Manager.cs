@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace DbManager.Security
@@ -174,8 +176,30 @@ namespace DbManager.Security
         public Profile ProfileByUser(string username)
         {
             //TODO DEADLINE 5: Return the profile by user. If the user doesn't exist, return null
-            
-            return null;
+            if (username == null)
+            {
+                return null;
+            }
+
+            Profile profile = null;
+
+            foreach (Profile p in Profiles)
+            {
+                foreach (User u in p.Users)
+                {
+                    if (u.Username == username)
+                    {
+                        profile = p;
+                    }
+                }
+            }
+
+            if (profile == null)
+            {
+                return null;
+            }
+
+            return profile;
             
         }
 
@@ -206,8 +230,71 @@ namespace DbManager.Security
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
-            
-            return null;
+            try
+            {
+                Manager manager = new Manager(username);
+
+                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.dat");
+                if (!File.Exists(path))
+                {
+                    return null;
+                }
+
+                using (TextReader tr = File.OpenText(path))
+                {
+                    string line;
+                    while ((line = tr.ReadLine()) != null)
+                    {
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        string[] parts = line.Split(',');
+
+                        if (parts.Length >= 5)
+                        {
+                            string uName = parts[0].Trim();
+                            string uPass = parts[1].Trim();
+                            string pName = parts[2].Trim();
+                            string pTable = parts[3].Trim();
+                            string allUserPrivileges = parts[4].Trim();
+
+                            Profile profile = manager.ProfileByName(pName);
+                            if (profile == null)
+                            {
+                                profile = new Profile { Name = pName };
+                                manager.Profiles.Add(profile);
+                            }
+
+                            bool userExists = false;
+                            foreach (User u in profile.Users)
+                            {
+                                if (u.Username == uName)
+                                {
+                                    userExists = true;
+                                    break;
+                                }
+                            }
+
+                            if (!userExists)
+                            {
+                                profile.Users.Add(new User(uName, uPass));
+                            }
+
+                            string[] uPrivileges = allUserPrivileges.Split('/');
+
+                            foreach (string priv in uPrivileges)
+                            {
+                                Privilege privilege = (Privilege) Enum.Parse(typeof(Privilege), priv);
+                                profile.GrantPrivilege(pTable, privilege);
+                            }
+                        }
+                    }
+                }
+                return manager;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
             
         }
 
@@ -215,7 +302,15 @@ namespace DbManager.Security
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            
+            string folder = databaseName;
+            string path = Path.Combine(databaseName, "security.json");
+            Directory.CreateDirectory(folder);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+            string json= JsonSerializer.Serialize(Profiles, options);
+            File.WriteAllText(path, json);
         }
     }
 }
