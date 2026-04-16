@@ -140,6 +140,8 @@ namespace OurTests.SecurityTests
         {
             Assert.False(manager.IsPasswordCorrect("admin","wrongpassword"));
         }
+
+        [Fact]
         public void TestIsUserAdmin()
         {
             User admin = new User("admin", "1234");
