@@ -117,7 +117,9 @@ namespace DbManager.Security
 
             return profile.IsGrantedPrivilege(table, privilege);
 
-            }
+
+
+        }
 
         // Aitana
         public void AddProfile(Profile profile)
@@ -300,15 +302,69 @@ namespace DbManager.Security
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            string folder = databaseName;
-            string path = Path.Combine(databaseName, "security.json");
-            Directory.CreateDirectory(folder);
-            var options = new JsonSerializerOptions
+            try
             {
-                WriteIndented = true,
-            };
-            string json= JsonSerializer.Serialize(Profiles, options);
-            File.WriteAllText(path, json);
+                string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
+                Directory.CreateDirectory(folder);
+                string path = Path.Combine(folder, "security.dat");
+                using (StreamWriter sw= new StreamWriter(path, false))
+                {
+                    foreach(Profile profile in Profiles)
+                    {
+                        if (profile == null)
+                        {
+                            continue;
+                        }
+                        foreach(User user in profile.Users)
+                        {
+                            if(user==null)
+                            {
+                                continue;
+                                string privileges = "";
+                                if(profile.IsGrantedPrivilege("Users", Privilege.Select))
+                                {
+                                   if(privileges!="")
+                                   {
+                                        privileges += "/";
+                                   }
+                                   privileges += Privilege.Select.ToString();
+                                   }
+                                   if(profile.IsGrantedPrivilege("Users", Privilege.Insert))
+                                   {
+                                       if (privileges != "")
+                                       {
+                                           privileges += "/";
+                                       }
+                                       privileges += Privilege.Insert.ToString();
+                                   }
+                                   if (profile.IsGrantedPrivilege("Users", Privilege.Delete))
+                                   {
+                                        if (privileges != "")
+                                        {
+                                            privileges += "/";
+                                        }
+                                        privileges += Privilege.Delete.ToString();
+                                   }
+                                   if (profile.IsGrantedPrivilege("Users", Privilege.Update))
+                                   {
+                                        if (privileges != "")
+                                        {
+                                            privileges += "/";
+                                        }
+                                        privileges += Privilege.Update.ToString();
+                                   }
+                                   if(privileges!="")
+                                   {
+                                       sw.WriteLine(user.Username+","+user.EncryptedPassword+","+profile.Name+",Users,"+privileges);
+                                   }
+                            }
+                        }
+                    }
+                };
+            }catch (Exception ex)
+            {
+                return;
+            }
         }
     }
 }
