@@ -301,7 +301,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
             string folder = databaseName;
-            string path = Path.Combine(databaseName, "security.json");
+            string path = Path.Combine(databaseName, "security.dat");
             Directory.CreateDirectory(folder);
             var options = new JsonSerializerOptions
             {
