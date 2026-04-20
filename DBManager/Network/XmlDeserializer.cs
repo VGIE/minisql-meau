@@ -10,6 +10,7 @@ namespace DbManager.Network
 {
     public static class XmlDeserializer
     {
+        // Unai
         public static bool ParseOpen(string command, out string database, out string username, out string password)
         {
             //TODO DEADLINE 6: Try to parse the xml command using the specified xml format (eGela)
@@ -22,6 +23,7 @@ namespace DbManager.Network
             return false;
         }
 
+        // Aitana
         public static bool ParseOpenCreateAnswer(string answer, out string error)
         {
             //TODO DEADLINE 6: Try to parse the answer to an Open/Create command.
@@ -32,6 +34,7 @@ namespace DbManager.Network
             return false;
         }
 
+        // Maialen
         public static bool ParseCreate(string command, out string database, out string username, out string password)
         {
             //TODO DEADLINE 6: Try to parse a Create xml command using the specified xml format (eGela)
@@ -44,7 +47,7 @@ namespace DbManager.Network
         }
 
         
-
+        // Endika
         public static bool ParseQuery(string answer, out string query)
         {
             //TODO DEADLINE 6: Try to parse a Query xml command using the specified xml format (eGela)
@@ -54,6 +57,7 @@ namespace DbManager.Network
             return false;
         }
 
+        // Endika
         public static bool ParseQueryAnswer(string answer, out string answerContent)
         {
             //TODO DEADLINE 6: Try to parse the answer to a Query command.

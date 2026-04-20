@@ -16,6 +16,8 @@ namespace DbManager.Network
         {
             m_tcpClient = new TcpClient();
         }
+
+        // Unai
         public bool Connect(string ipAddress, int port)
         {
             //DEADLINE 6: Connect the tcp client to the given ip/port
@@ -25,6 +27,7 @@ namespace DbManager.Network
             
         }
 
+        // Maialen
         private string SendString(string message)
         {
             //DEADLINE 6: Send a string to the server, read the answer and return it.
@@ -36,6 +39,7 @@ namespace DbManager.Network
             
         }
 
+        // Aitana
         public bool Open(string database, string username, string password, out string error)
         {
             //DEADLINE 6: Send an Open command to the server using SendString
@@ -45,6 +49,7 @@ namespace DbManager.Network
             
         }
 
+        // Endika
         public bool Create(string database, string username, string password, out string error)
         {
             //DEADLINE 6: Send a Create command to the server using SendString
@@ -54,6 +59,7 @@ namespace DbManager.Network
             
         }
 
+        // Maialen
         public string SendQuery(string query)
         {
             //DEADLINE 6: Send a Query command to the server using SendString
@@ -62,6 +68,7 @@ namespace DbManager.Network
             
         }
 
+        // Aitana
         public void Close()
         {
             //DEADLINE 6: Send a Close command to the server using SendString and close the connection to the server
