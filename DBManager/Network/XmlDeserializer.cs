@@ -10,7 +10,7 @@ namespace DbManager.Network
 {
     public static class XmlDeserializer
     {
-        // Unai
+        // Aitana
         public static bool ParseOpen(string command, out string database, out string username, out string password)
         {
             //TODO DEADLINE 6: Try to parse the xml command using the specified xml format (eGela)
