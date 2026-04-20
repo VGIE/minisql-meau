@@ -23,6 +23,7 @@ namespace DbManager.Security
 
             if (table == null)
             {
+                
                 return false;
             }
 
@@ -38,6 +39,7 @@ namespace DbManager.Security
 
             PrivilegesOn[table].Add(privilege);
             return true;
+
         }
 
         public bool RevokePrivilege(string table, Privilege privilege)
@@ -53,6 +55,7 @@ namespace DbManager.Security
 
             if (!PrivilegesOn.ContainsKey(table))
             {
+               
                 return false;
             }
 
@@ -63,6 +66,7 @@ namespace DbManager.Security
 
             PrivilegesOn[table].Remove(privilege);
             return true;
+
 
         }
 
