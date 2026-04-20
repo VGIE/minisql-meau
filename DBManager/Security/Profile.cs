@@ -19,7 +19,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
 
-            if (Name != AdminProfileName) return false;
+            // if (Name != AdminProfileName) return false;
 
             if (table == null)
             {
@@ -44,7 +44,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
 
-            if (Name != AdminProfileName) return false;
+            // if (Name != AdminProfileName) return false;
 
             if (table == null)
             {

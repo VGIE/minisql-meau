@@ -64,11 +64,13 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            if(profileName==null || table==null)
+            if (!IsUserAdmin()) return;
+
+            if (profileName==null || table==null)
             {
                 return ;
             }
-            Profile profile = ProfileByUser(profileName);
+            Profile profile = ProfileByName(profileName);
             if (profile != null)
             {
                 profile.GrantPrivilege(table, privilege);
@@ -80,6 +82,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
+            if (!IsUserAdmin()) return;
 
             if (profileName == null || table == null)
             {
@@ -242,6 +245,28 @@ namespace DbManager.Security
                 if (perfilesCargados != null)
                 {
                     manager.Profiles = perfilesCargados;
+
+                    JsonArray jsonArray = JsonNode.Parse(jsonString).AsArray();
+                    for (int i = 0; i < perfilesCargados.Count; i++)
+                    {
+                        var privsNode = jsonArray[i]?["PrivilegesOn"]?.AsObject();
+                        if (privsNode != null)
+                        {
+                            foreach (var tableNode in privsNode)
+                            {
+                                string tableName = tableNode.Key;
+                                var privArray = tableNode.Value?.AsArray();
+                                if (privArray != null)
+                                {
+                                    foreach (var privNode in privArray)
+                                    {
+                                        Privilege p = (Privilege)privNode.GetValue<int>();
+                                        perfilesCargados[i].GrantPrivilege(tableName, p);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 return manager;
