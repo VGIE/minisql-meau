@@ -98,7 +98,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
+                        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             {
                 return false;
             }
@@ -116,9 +116,7 @@ namespace DbManager.Security
 
             return profile.IsGrantedPrivilege(table, privilege);
 
-
-
-        }
+            }
 
         // Aitana
         public void AddProfile(Profile profile)
@@ -231,70 +229,27 @@ namespace DbManager.Security
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
             try
             {
-                Manager manager = new Manager(username);
-
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.dat");
-                if (!File.Exists(path))
+
+                if (!File.Exists(path)) return new Manager(username);
+
+                string jsonString = File.ReadAllText(path);
+
+                List<Profile> perfilesCargados = JsonSerializer.Deserialize<List<Profile>>(jsonString);
+
+                Manager manager = new Manager(username);
+                if (perfilesCargados != null)
                 {
-                    return null;
+                    manager.Profiles = perfilesCargados;
                 }
 
-                using (TextReader tr = File.OpenText(path))
-                {
-                    string line;
-                    while ((line = tr.ReadLine()) != null)
-                    {
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-
-                        string[] parts = line.Split(',');
-
-                        if (parts.Length >= 5)
-                        {
-                            string uName = parts[0].Trim();
-                            string uPass = parts[1].Trim();
-                            string pName = parts[2].Trim();
-                            string pTable = parts[3].Trim();
-                            string allUserPrivileges = parts[4].Trim();
-
-                            Profile profile = manager.ProfileByName(pName);
-                            if (profile == null)
-                            {
-                                profile = new Profile { Name = pName };
-                                manager.Profiles.Add(profile);
-                            }
-
-                            bool userExists = false;
-                            foreach (User u in profile.Users)
-                            {
-                                if (u.Username == uName)
-                                {
-                                    userExists = true;
-                                    break;
-                                }
-                            }
-
-                            if (!userExists)
-                            {
-                                profile.Users.Add(new User(uName, uPass));
-                            }
-
-                            string[] uPrivileges = allUserPrivileges.Split('/');
-
-                            foreach (string priv in uPrivileges)
-                            {
-                                Privilege privilege = (Privilege) Enum.Parse(typeof(Privilege), priv);
-                                profile.GrantPrivilege(pTable, privilege);
-                            }
-                        }
-                    }
-                }
                 return manager;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
-            
+
         }
 
         // Endika
@@ -302,7 +257,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
             string folder = databaseName;
-            string path = Path.Combine(databaseName, "security.json");
+            string path = Path.Combine(databaseName, "security.dat");
             Directory.CreateDirectory(folder);
             var options = new JsonSerializerOptions
             {
