@@ -47,17 +47,16 @@ namespace DbManager.Security
             
             User obj = UserByName(username);
 
-            if (obj.EncryptedPassword == Encryption.Encrypt(password))
+            if (obj == null)
             {
-               return true;
+               return false;
             }
-            else
-            {
-                return false;
-            }
-            
+            return obj.EncryptedPassword == Encryption.Encrypt(password);
             
         }
+            
+            
+        
 
         // Endika
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
