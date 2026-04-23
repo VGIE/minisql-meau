@@ -289,60 +289,12 @@ namespace DbManager.Security
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
                 Directory.CreateDirectory(folder);
                 string path = Path.Combine(folder, "security.dat");
-                using (StreamWriter sw= new StreamWriter(path, false))
+                JsonSerializerOptions options = new JsonSerializerOptions
                 {
-                    foreach(Profile profile in Profiles)
-                    {
-                        if (profile == null)
-                        {
-                            continue;
-                        }
-                        foreach(User user in profile.Users)
-                        {
-                            if(user==null)
-                            {
-                                continue;
-                                string privileges = "";
-                                if(profile.IsGrantedPrivilege("Users", Privilege.Select))
-                                {
-                                   if(privileges!="")
-                                   {
-                                        privileges += "/";
-                                   }
-                                   privileges += Privilege.Select.ToString();
-                                   }
-                                   if(profile.IsGrantedPrivilege("Users", Privilege.Insert))
-                                   {
-                                       if (privileges != "")
-                                       {
-                                           privileges += "/";
-                                       }
-                                       privileges += Privilege.Insert.ToString();
-                                   }
-                                   if (profile.IsGrantedPrivilege("Users", Privilege.Delete))
-                                   {
-                                        if (privileges != "")
-                                        {
-                                            privileges += "/";
-                                        }
-                                        privileges += Privilege.Delete.ToString();
-                                   }
-                                   if (profile.IsGrantedPrivilege("Users", Privilege.Update))
-                                   {
-                                        if (privileges != "")
-                                        {
-                                            privileges += "/";
-                                        }
-                                        privileges += Privilege.Update.ToString();
-                                   }
-                                   if(privileges!="")
-                                   {
-                                       sw.WriteLine(user.Username+","+user.EncryptedPassword+","+profile.Name+",Users,"+privileges);
-                                   }
-                            }
-                        }
-                    }
+                    WriteIndented = true
                 };
+                string json = JsonSerializer.Serialize(Profiles, options);
+                File.WriteAllText(path, json);
             }catch (Exception ex)
             {
                 return;
