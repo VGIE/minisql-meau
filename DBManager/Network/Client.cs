@@ -17,14 +17,25 @@ namespace DbManager.Network
             m_tcpClient = new TcpClient();
         }
 
-        // Unai
+        // Aitana
         public bool Connect(string ipAddress, int port)
         {
             //DEADLINE 6: Connect the tcp client to the given ip/port
             //Return false if something goes wrong, true otherwise (try/catch)
-            
-            return false;
-            
+
+            try
+            {
+                m_tcpClient.Connect(ipAddress, port);
+                return true;
+            }
+            catch (Exception e)
+            {
+                
+                return false;
+            }
+
+          
+
         }
 
         // Maialen
