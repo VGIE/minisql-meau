@@ -67,7 +67,7 @@ namespace DbManager.Security
             {
                 return ;
             }
-            Profile profile = ProfileByUser(profileName);
+            Profile profile = ProfileByName(profileName);
             if (profile != null)
             {
                 profile.GrantPrivilege(table, privilege);
