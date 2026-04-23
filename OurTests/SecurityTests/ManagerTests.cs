@@ -26,6 +26,13 @@ namespace OurTests.SecurityTests
         public void TestRevokePrivilege()
         {
             Manager manager = new Manager("Admin");
+
+            User admin = new User("Admin", "1234");
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(admin);
+            manager.Profiles.Add(adminProfile);
+
             string profileName = "Developer";
             string tableName = "Employees";
             Privilege priv = Privilege.Update;
@@ -101,13 +108,16 @@ namespace OurTests.SecurityTests
         {
             string dbName = "TestDatabase";
             string testUser = "admin_user";
-            string securityContent = "admin,1234,AdminProfile,UsersTable,Select/Insert";
+
+            Manager managerToSave = new Manager(testUser);
+            Profile profileToSave = new Profile { Name = "AdminProfile" };
+            profileToSave.GrantPrivilege("UsersTable", Privilege.Select);
+            profileToSave.GrantPrivilege("UsersTable", Privilege.Insert);
+            managerToSave.Profiles.Add(profileToSave);
 
             string path = Path.Combine(Directory.GetCurrentDirectory(), dbName);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-            string filePath = Path.Combine(path, "security.dat");
-            File.WriteAllText(filePath, securityContent);
+            managerToSave.Save(dbName);
 
             try
             {
@@ -128,6 +138,7 @@ namespace OurTests.SecurityTests
                 if (Directory.Exists(path)) Directory.Delete(path, true);
             }
         }
+
 
         [Fact]
         public void TestIsPassCorrTrue()

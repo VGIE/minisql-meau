@@ -21,29 +21,33 @@ namespace DbManager
         //This constructor should only be used from Load (without needing to set a password for the user). It cannot be used from any other class
         private Database() // Maialen
         {
-            Tables = new List<Table>();
-            LastErrorMessage = string.Empty;
-            SecurityManager = new Manager("system");
-            
+
+
         }
 
         public Database(string adminUsername, string adminPassword) // Maialen
         {
             //DEADLINE 1.B: Initalize the member variables
-            m_username = adminUsername;
+            this.m_username = adminUsername;
+            Profile adProfile = new Profile
+            {
+                Name = Profile.AdminProfileName
+            };
+            adProfile.Users.Add(new User(adminUsername, adminPassword));
             Tables = new List<Table>();
             LastErrorMessage = string.Empty;
             SecurityManager = new Manager(adminUsername);
+            SecurityManager.Profiles.Add(adProfile);
 
-           
-            
+
+
         }
 
         public int NumTables()
 
         {
 
-             return Tables.Count; 
+            return Tables.Count;
 
         }
 
@@ -56,7 +60,7 @@ namespace DbManager
                 return false;
             }
 
-            
+
             if (TableByName(table.Name) != null)
             {
                 LastErrorMessage = Constants.TableAlreadyExistsError;
@@ -65,7 +69,7 @@ namespace DbManager
 
             Tables.Add(table);
 
-          
+
             LastErrorMessage = Constants.CreateTableSuccess;
 
             return true;
@@ -117,27 +121,32 @@ namespace DbManager
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
             Table table = TableByName(tableName);
-           
-            if(table==null)
+
+            if (table == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
-           
+
             Tables.Remove(table);
             LastErrorMessage = Constants.DropTableSuccess;
-            
+
             return true;
-            
+
         }
 
         public bool Insert(string tableName, List<string> values) // Maialen
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
+            if (!SecurityManager.IsGrantedPrivilege(this.m_username, tableName, Privilege.Insert))
+            {
+                LastErrorMessage = Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+                return false;
+            }
+
             Table table = TableByName(tableName);
-            
+
             if (table == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
@@ -145,10 +154,10 @@ namespace DbManager
             }
 
             bool success = table.Insert(values);
-            
-            if(success)
+
+            if (success)
             {
-                LastErrorMessage=Constants.InsertSuccess;
+                LastErrorMessage = Constants.InsertSuccess;
                 return true;
             }
             else
@@ -156,8 +165,7 @@ namespace DbManager
                 LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
             }
-           
-            
+
         }
 
         public Table Select(string tableName, List<string> columns, Condition condition) // Endika
@@ -165,25 +173,25 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            Table table= TableByName(tableName);
+            Table table = TableByName(tableName);
             if (table == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return null;
             }
-            if(columns == null || columns.Count==0)
+            if (columns == null || columns.Count == 0)
             {
                 columns = new List<string>();
-                for (int i=0; i<table.NumColumns(); i++)
+                for (int i = 0; i < table.NumColumns(); i++)
                 {
                     columns.Add(table.GetColumn(i).Name);
                 }
             }
             foreach (string col in columns)
             {
-                if (table.ColumnIndexByName(col)==-1)
+                if (table.ColumnIndexByName(col) == -1)
                 {
-                    LastErrorMessage=Constants.ColumnDoesNotExistError;
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
                     return null;
                 }
             }
@@ -245,16 +253,16 @@ namespace DbManager
                 return false;
             }
 
-            
+
             table.Update(columnNames, columnCondition);
 
             return true;
         }
 
-        private const string tbl=".tbl";
+        private const string tbl = ".tbl";
         private const string Delimiter = "--";
 
-        
+
         public bool Save(string databaseName) // Endika
         {
             //DEADLINE 1.C: Save this database to disk with the given name
@@ -285,10 +293,10 @@ namespace DbManager
             }
             catch (Exception ex)
             {
-                    LastErrorMessage = Constants.Error + ex.Message;
-                    return false;
+                LastErrorMessage = Constants.Error + ex.Message;
+                return false;
             }
-            
+
         }
 
         public static Database Load(string databaseName, string username, string password) // Endika
@@ -302,17 +310,17 @@ namespace DbManager
                 Database db = new Database();
                 db.m_username = username;
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                if (!Directory.Exists(path)) 
+                if (!Directory.Exists(path))
                 {
                     return null;
                 }
-                foreach (var filePath in Directory.GetFiles(path, "*"+tbl))
+                foreach (var filePath in Directory.GetFiles(path, "*" + tbl))
                 {
                     using (TextReader reader = File.OpenText(filePath))
                     {
                         List<ColumnDefinition> columns = new List<ColumnDefinition>();
                         string line;
-                        while ((line = reader.ReadLine()) != null&&line!=Delimiter)
+                        while ((line = reader.ReadLine()) != null && line != Delimiter)
                         {
                             columns.Add(ColumnDefinition.Parse(line));
                         }
@@ -321,10 +329,10 @@ namespace DbManager
                         Table table = db.TableByName(tableName);
                         if (table == null)
                         {
-                            db.LastErrorMessage=Constants.TableDoesNotExistError;
+                            db.LastErrorMessage = Constants.TableDoesNotExistError;
                             return null;
                         }
-                        if (line==Delimiter)
+                        if (line == Delimiter)
                         {
                             while ((line = reader.ReadLine()) != null)
                             {
@@ -335,19 +343,19 @@ namespace DbManager
                     }
                 }
                 string secFile = Path.Combine(path, "security.dat");
-                if (!File.Exists(secFile)) 
+                if (!File.Exists(secFile))
                 {
                     db.SecurityManager = new Manager("system");
-                    return db; 
+                    return db;
                 }
                 db.SecurityManager = Manager.Load(secFile, username);
-                if(db.SecurityManager == null||!db.SecurityManager.IsPasswordCorrect(username, password))
+                if (db.SecurityManager == null || !db.SecurityManager.IsPasswordCorrect(username, password))
                 {
                     return null;
                 }
                 return db;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return null;
             }
@@ -405,8 +413,8 @@ namespace DbManager
         }
     }
 }
-    
-    
+
+
 
 
 

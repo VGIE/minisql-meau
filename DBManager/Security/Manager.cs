@@ -47,28 +47,29 @@ namespace DbManager.Security
             
             User obj = UserByName(username);
 
-            if (obj.EncryptedPassword == Encryption.Encrypt(password))
+            if (obj == null)
             {
-               return true;
+               return false;
             }
-            else
-            {
-                return false;
-            }
-            
+            return obj.EncryptedPassword == Encryption.Encrypt(password);
             
         }
+            
+            
+        
 
         // Endika
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            if(profileName==null || table==null)
+            if (!IsUserAdmin()) return;
+
+            if (profileName==null || table==null)
             {
                 return ;
             }
-            Profile profile = ProfileByUser(profileName);
+            Profile profile = ProfileByName(profileName);
             if (profile != null)
             {
                 profile.GrantPrivilege(table, privilege);
@@ -80,6 +81,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
+            if (!IsUserAdmin()) return;
 
             if (profileName == null || table == null)
             {
@@ -99,7 +101,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
+                        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             {
                 return false;
             }
@@ -232,70 +234,49 @@ namespace DbManager.Security
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
             try
             {
-                Manager manager = new Manager(username);
-
                 string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.dat");
-                if (!File.Exists(path))
-                {
-                    return null;
-                }
 
-                using (TextReader tr = File.OpenText(path))
+                if (!File.Exists(path)) return new Manager(username);
+
+                string jsonString = File.ReadAllText(path);
+
+                List<Profile> perfilesCargados = JsonSerializer.Deserialize<List<Profile>>(jsonString);
+
+                Manager manager = new Manager(username);
+                if (perfilesCargados != null)
                 {
-                    string line;
-                    while ((line = tr.ReadLine()) != null)
+                    manager.Profiles = perfilesCargados;
+
+                    JsonArray jsonArray = JsonNode.Parse(jsonString).AsArray();
+                    for (int i = 0; i < perfilesCargados.Count; i++)
                     {
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-
-                        string[] parts = line.Split(',');
-
-                        if (parts.Length >= 5)
+                        var privsNode = jsonArray[i]?["PrivilegesOn"]?.AsObject();
+                        if (privsNode != null)
                         {
-                            string uName = parts[0].Trim();
-                            string uPass = parts[1].Trim();
-                            string pName = parts[2].Trim();
-                            string pTable = parts[3].Trim();
-                            string allUserPrivileges = parts[4].Trim();
-
-                            Profile profile = manager.ProfileByName(pName);
-                            if (profile == null)
+                            foreach (var tableNode in privsNode)
                             {
-                                profile = new Profile { Name = pName };
-                                manager.Profiles.Add(profile);
-                            }
-
-                            bool userExists = false;
-                            foreach (User u in profile.Users)
-                            {
-                                if (u.Username == uName)
+                                string tableName = tableNode.Key;
+                                var privArray = tableNode.Value?.AsArray();
+                                if (privArray != null)
                                 {
-                                    userExists = true;
-                                    break;
+                                    foreach (var privNode in privArray)
+                                    {
+                                        Privilege p = (Privilege)privNode.GetValue<int>();
+                                        perfilesCargados[i].GrantPrivilege(tableName, p);
+                                    }
                                 }
-                            }
-
-                            if (!userExists)
-                            {
-                                profile.Users.Add(new User(uName, uPass));
-                            }
-
-                            string[] uPrivileges = allUserPrivileges.Split('/');
-
-                            foreach (string priv in uPrivileges)
-                            {
-                                Privilege privilege = (Privilege) Enum.Parse(typeof(Privilege), priv);
-                                profile.GrantPrivilege(pTable, privilege);
                             }
                         }
                     }
                 }
+
                 return manager;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
-            
+
         }
 
         // Endika
