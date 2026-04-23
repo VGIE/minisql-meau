@@ -19,10 +19,11 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
 
-            if (Name != AdminProfileName) return false;
+            // if (Name != AdminProfileName) return false;
 
             if (table == null)
             {
+                
                 return false;
             }
 
@@ -38,13 +39,14 @@ namespace DbManager.Security
 
             PrivilegesOn[table].Add(privilege);
             return true;
+
         }
 
         public bool RevokePrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
 
-            if (Name != AdminProfileName) return false;
+            // if (Name != AdminProfileName) return false;
 
             if (table == null)
             {
@@ -53,6 +55,7 @@ namespace DbManager.Security
 
             if (!PrivilegesOn.ContainsKey(table))
             {
+               
                 return false;
             }
 
@@ -63,6 +66,7 @@ namespace DbManager.Security
 
             PrivilegesOn[table].Remove(privilege);
             return true;
+
 
         }
 

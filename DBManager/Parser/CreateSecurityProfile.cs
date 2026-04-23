@@ -28,7 +28,8 @@ namespace DbManager
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
 
-            database.SecurityManager.AddProfile(new Profile { 
+            database.SecurityManager.AddProfile(new Profile 
+            { 
                 Name = this.ProfileName 
             });
 
