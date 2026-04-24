@@ -119,7 +119,9 @@ namespace DbManager.Security
 
             return profile.IsGrantedPrivilege(table, privilege);
 
-            }
+
+
+        }
 
         // Aitana
         public void AddProfile(Profile profile)
@@ -280,16 +282,23 @@ namespace DbManager.Security
         // Endika
         public void Save(string databaseName)
         {
+            //commit para creacion de rama 
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            string folder = databaseName;
-            string path = Path.Combine(databaseName, "security.dat");
-            Directory.CreateDirectory(folder);
-            var options = new JsonSerializerOptions
+            try
             {
-                WriteIndented = true,
-            };
-            string json= JsonSerializer.Serialize(Profiles, options);
-            File.WriteAllText(path, json);
+                string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
+                Directory.CreateDirectory(folder);
+                string path = Path.Combine(folder, "security.dat");
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
+                string json = JsonSerializer.Serialize(Profiles, options);
+                File.WriteAllText(path, json);
+            }catch (Exception ex)
+            {
+                return;
+            }
         }
     }
 }

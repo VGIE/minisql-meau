@@ -17,14 +17,25 @@ namespace DbManager.Network
             m_tcpClient = new TcpClient();
         }
 
-        // Endika
+        // Aitana
         public bool Connect(string ipAddress, int port)
         {
             //DEADLINE 6: Connect the tcp client to the given ip/port
             //Return false if something goes wrong, true otherwise (try/catch)
-            
-            return false;
-            
+
+            try
+            {
+                m_tcpClient.Connect(ipAddress, port);
+                return true;
+            }
+            catch (Exception e)
+            {
+                
+                return false;
+            }
+
+          
+
         }
 
         // Maialen
@@ -34,8 +45,22 @@ namespace DbManager.Network
             //Here, we do not do any Xml formatting, we just send the string as it comes and return the string as it comes
             //This private method should be used from Open/SendQuery/Close
             //Have a look at the project ClientConsole to see how we can use the TcpClient class
-            
-            return null;
+            try
+            {
+                NetworkStream strm = m_tcpClient.GetStream();
+                ASCIIEncoding encoding = new ASCIIEncoding();
+                byte[] bToSend = encoding.GetBytes(message);
+                strm.Write(bToSend, 0, bToSend.Length);
+
+                byte[] buff = new byte[1024];
+                int bToRead = strm.Read(buff, 0, buff.Length);
+                return encoding.GetString(buff, 0, bToRead);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error sending message: " + e.Message);
+                return null;
+            }
             
         }
 
