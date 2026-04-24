@@ -17,7 +17,7 @@ namespace DbManager.Network
             m_tcpClient = new TcpClient();
         }
 
-        // Unai
+        // Endika
         public bool Connect(string ipAddress, int port)
         {
             //DEADLINE 6: Connect the tcp client to the given ip/port
