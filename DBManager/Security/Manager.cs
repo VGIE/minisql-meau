@@ -30,7 +30,7 @@ namespace DbManager.Security
 
             if (profile != null)
             {
-                if (profile.Name.Equals(Profile.AdminProfileName))
+                if(profile.Name == Profile.AdminProfileName)
                     return true;
             }
             return false;
@@ -101,6 +101,12 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
 
+            if (!IsUserAdmin() && username != m_username)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             {
                 return false;
@@ -249,15 +255,15 @@ namespace DbManager.Security
 
                 string jsonString = File.ReadAllText(path);
 
-                List<Profile> perfilesCargados = JsonSerializer.Deserialize<List<Profile>>(jsonString);
+                List<Profile> loadedProfiles = JsonSerializer.Deserialize<List<Profile>>(jsonString);
 
                 Manager manager = new Manager(username);
-                if (perfilesCargados != null)
+                if (loadedProfiles != null)
                 {
-                    manager.Profiles = perfilesCargados;
+                    manager.Profiles = loadedProfiles;
 
                     JsonArray jsonArray = JsonNode.Parse(jsonString).AsArray();
-                    for (int i = 0; i < perfilesCargados.Count; i++)
+                    for (int i = 0; i < loadedProfiles.Count; i++)
                     {
                         var privsNode = jsonArray[i]?["PrivilegesOn"]?.AsObject();
                         if (privsNode != null)
@@ -271,12 +277,18 @@ namespace DbManager.Security
                                     foreach (var privNode in privArray)
                                     {
                                         Privilege p = (Privilege)privNode.GetValue<int>();
-                                        perfilesCargados[i].GrantPrivilege(tableName, p);
+                                        loadedProfiles[i].GrantPrivilege(tableName, p);
                                     }
                                 }
                             }
                         }
                     }
+
+                    if (manager.UserByName(username) == null)
+                    {
+                        return null;
+                    }
+
                 }
 
                 return manager;
@@ -293,6 +305,11 @@ namespace DbManager.Security
         {
             //commit para creacion de rama 
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
+            if (!IsUserAdmin())
+            {
+                return;
+            }
+
             try
             {
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
