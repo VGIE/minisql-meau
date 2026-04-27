@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.IO;
 namespace DbManager.Network
 {
     public class Client
@@ -17,14 +17,25 @@ namespace DbManager.Network
             m_tcpClient = new TcpClient();
         }
 
-        // Unai
+        // Aitana
         public bool Connect(string ipAddress, int port)
         {
             //DEADLINE 6: Connect the tcp client to the given ip/port
             //Return false if something goes wrong, true otherwise (try/catch)
-            
-            return false;
-            
+
+            try
+            {
+                m_tcpClient.Connect(ipAddress, port);
+                return true;
+            }
+            catch (Exception e)
+            {
+                
+                return false;
+            }
+
+          
+
         }
 
         // Maialen
@@ -37,18 +48,20 @@ namespace DbManager.Network
             try
             {
                 NetworkStream strm = m_tcpClient.GetStream();
-                ASCIIEncoding encoding = new ASCIIEncoding();
-                byte[] bToSend = encoding.GetBytes(message);
+                ASCIIEncoding enco = new ASCIIEncoding();
+                
+                byte[] bToSend = enco.GetBytes(message);
                 strm.Write(bToSend, 0, bToSend.Length);
+                strm.Flush(); 
 
                 byte[] buff = new byte[1024];
                 int bToRead = strm.Read(buff, 0, buff.Length);
-                return encoding.GetString(buff, 0, bToRead);
+                
+                return enco.GetString(buff, 0, bToRead);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Error sending message: " + e.Message);
-                return null;
+                throw new IOException("Server error.", ex);
             }
             
         }
