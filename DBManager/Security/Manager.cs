@@ -63,7 +63,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-      
+            if (!IsUserAdmin()) return;
 
             if (profileName==null || table==null)
             {
@@ -81,6 +81,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
+            if (!IsUserAdmin()) return;
 
             if (profileName == null || table == null)
             {
@@ -100,7 +101,12 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
 
-                        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
+            if (!IsUserAdmin() && username != m_username)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             {
                 return false;
             }
