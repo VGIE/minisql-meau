@@ -30,7 +30,7 @@ namespace DbManager.Security
 
             if (profile != null)
             {
-                if (profile.Name.Equals(Profile.AdminProfileName))
+                if(profile.Name == Profile.AdminProfileName)
                     return true;
             }
             return false;
