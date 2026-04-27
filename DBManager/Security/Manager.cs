@@ -24,8 +24,8 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            
-           
+
+
             Profile profile = ProfileByUser(m_username);
 
             if (profile != null)
@@ -34,7 +34,7 @@ namespace DbManager.Security
                     return true;
             }
             return false;
-    
+
         }
 
 
@@ -44,19 +44,19 @@ namespace DbManager.Security
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
-            
+
             User obj = UserByName(username);
 
             if (obj == null)
             {
-               return false;
+                return false;
             }
             return obj.EncryptedPassword == Encryption.Encrypt(password);
-            
+
         }
-            
-            
-        
+
+
+
 
         // Endika
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
@@ -65,15 +65,15 @@ namespace DbManager.Security
             //If the profile or the table don't exist, do nothing
             if (!IsUserAdmin()) return;
 
-            if (profileName==null || table==null)
+            if (profileName == null || table == null)
             {
-                return ;
+                return;
             }
             Profile profile = ProfileByName(profileName);
             if (profile != null)
             {
                 profile.GrantPrivilege(table, privilege);
-            }     
+            }
         }
 
         // Unai
@@ -101,7 +101,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
 
-                        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             {
                 return false;
             }
@@ -147,31 +147,40 @@ namespace DbManager.Security
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
-             foreach(Profile p in Profiles)
+
+            if (username == null)
             {
-                foreach(User u in p.Users)
+                return null;
+            }
+            foreach (Profile p in Profiles)
+            {
+                foreach (User u in p.Users)
                 {
-                    if (username.Equals(u.Username))
+                    if (u.Username.Equals(username))
                     {
                         return u;
                     }
                 }
             }
             return null;
-            
+
         }
 
         // Maialen
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-           foreach(var p in Profiles)
+            if (string.IsNullOrEmpty(profileName))
             {
-                if(p.Name==profileName)
+                return null;
+            }
+            foreach (Profile p in Profiles)
+            {
+                if (p.Name.Equals(profileName))
                     return p;
             }
             return null;
-            
+
         }
 
         // Unai
@@ -202,15 +211,15 @@ namespace DbManager.Security
             }
 
             return profile;
-            
+
         }
 
         // Aitana
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            
-  
+
+
             if (IsUserAdmin())
             {
                 Profile profile = ProfileByName(profileName);
@@ -220,7 +229,7 @@ namespace DbManager.Security
 
                     Profiles.Remove(profile);
                     return true;
-                    
+
                 }
             }
 
@@ -289,61 +298,63 @@ namespace DbManager.Security
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
                 Directory.CreateDirectory(folder);
                 string path = Path.Combine(folder, "security.dat");
-                using (StreamWriter sw= new StreamWriter(path, false))
+                using (StreamWriter sw = new StreamWriter(path, false))
                 {
-                    foreach(Profile profile in Profiles)
+                    foreach (Profile profile in Profiles)
                     {
                         if (profile == null)
                         {
                             continue;
                         }
-                        foreach(User user in profile.Users)
+                        foreach (User user in profile.Users)
                         {
-                            if(user==null)
+                            if (user == null)
                             {
                                 continue;
                                 string privileges = "";
-                                if(profile.IsGrantedPrivilege("Users", Privilege.Select))
+                                if (profile.IsGrantedPrivilege("Users", Privilege.Select))
                                 {
-                                   if(privileges!="")
-                                   {
+                                    if (privileges != "")
+                                    {
                                         privileges += "/";
-                                   }
-                                   privileges += Privilege.Select.ToString();
-                                   }
-                                   if(profile.IsGrantedPrivilege("Users", Privilege.Insert))
-                                   {
-                                       if (privileges != "")
-                                       {
-                                           privileges += "/";
-                                       }
-                                       privileges += Privilege.Insert.ToString();
-                                   }
-                                   if (profile.IsGrantedPrivilege("Users", Privilege.Delete))
-                                   {
-                                        if (privileges != "")
-                                        {
-                                            privileges += "/";
-                                        }
-                                        privileges += Privilege.Delete.ToString();
-                                   }
-                                   if (profile.IsGrantedPrivilege("Users", Privilege.Update))
-                                   {
-                                        if (privileges != "")
-                                        {
-                                            privileges += "/";
-                                        }
-                                        privileges += Privilege.Update.ToString();
-                                   }
-                                   if(privileges!="")
-                                   {
-                                       sw.WriteLine(user.Username+","+user.EncryptedPassword+","+profile.Name+",Users,"+privileges);
-                                   }
+                                    }
+                                    privileges += Privilege.Select.ToString();
+                                }
+                                if (profile.IsGrantedPrivilege("Users", Privilege.Insert))
+                                {
+                                    if (privileges != "")
+                                    {
+                                        privileges += "/";
+                                    }
+                                    privileges += Privilege.Insert.ToString();
+                                }
+                                if (profile.IsGrantedPrivilege("Users", Privilege.Delete))
+                                {
+                                    if (privileges != "")
+                                    {
+                                        privileges += "/";
+                                    }
+                                    privileges += Privilege.Delete.ToString();
+                                }
+                                if (profile.IsGrantedPrivilege("Users", Privilege.Update))
+                                {
+                                    if (privileges != "")
+                                    {
+                                        privileges += "/";
+                                    }
+                                    privileges += Privilege.Update.ToString();
+                                }
+                                if (privileges != "")
+                                {
+                                    sw.WriteLine(user.Username + "," + user.EncryptedPassword + "," + profile.Name + ",Users," + privileges);
+                                }
                             }
                         }
                     }
-                };
-            }catch (Exception ex)
+                }
+                ;
+            }
+            catch (Exception ex)
             {
                 return;
             }
