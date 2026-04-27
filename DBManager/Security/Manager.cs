@@ -240,15 +240,15 @@ namespace DbManager.Security
 
                 string jsonString = File.ReadAllText(path);
 
-                List<Profile> perfilesCargados = JsonSerializer.Deserialize<List<Profile>>(jsonString);
+                List<Profile> loadedProfiles = JsonSerializer.Deserialize<List<Profile>>(jsonString);
 
                 Manager manager = new Manager(username);
-                if (perfilesCargados != null)
+                if (loadedProfiles != null)
                 {
-                    manager.Profiles = perfilesCargados;
+                    manager.Profiles = loadedProfiles;
 
                     JsonArray jsonArray = JsonNode.Parse(jsonString).AsArray();
-                    for (int i = 0; i < perfilesCargados.Count; i++)
+                    for (int i = 0; i < loadedProfiles.Count; i++)
                     {
                         var privsNode = jsonArray[i]?["PrivilegesOn"]?.AsObject();
                         if (privsNode != null)
@@ -262,12 +262,18 @@ namespace DbManager.Security
                                     foreach (var privNode in privArray)
                                     {
                                         Privilege p = (Privilege)privNode.GetValue<int>();
-                                        perfilesCargados[i].GrantPrivilege(tableName, p);
+                                        loadedProfiles[i].GrantPrivilege(tableName, p);
                                     }
                                 }
                             }
                         }
                     }
+
+                    if (manager.UserByName(username) == null)
+                    {
+                        return null;
+                    }
+
                 }
 
                 return manager;
@@ -284,6 +290,11 @@ namespace DbManager.Security
         {
             //commit para creacion de rama 
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
+            if (!IsUserAdmin())
+            {
+                return;
+            }
+
             try
             {
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
