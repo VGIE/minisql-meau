@@ -107,7 +107,6 @@ namespace DbManager.Security
             }
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
             {
                 return false;
             }
