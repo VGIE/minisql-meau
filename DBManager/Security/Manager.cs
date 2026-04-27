@@ -30,7 +30,7 @@ namespace DbManager.Security
 
             if (profile != null)
             {
-                if (profile.Name.Equals(Profile.AdminProfileName))
+                if(profile.Name == Profile.AdminProfileName)
                     return true;
             }
             return false;
@@ -63,7 +63,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            if (!IsUserAdmin()) return;
+      
 
             if (profileName==null || table==null)
             {
@@ -81,7 +81,6 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            if (!IsUserAdmin()) return;
 
             if (profileName == null || table == null)
             {
