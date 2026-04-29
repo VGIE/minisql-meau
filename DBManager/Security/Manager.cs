@@ -303,7 +303,6 @@ namespace DbManager.Security
         // Endika
         public void Save(string databaseName)
         {
-            //commit para creacion de rama 
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
             try
             {
