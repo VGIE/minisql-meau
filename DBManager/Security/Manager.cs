@@ -24,17 +24,17 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            
-           
+
+
             Profile profile = ProfileByUser(m_username);
 
             if (profile != null)
             {
-                if(profile.Name == Profile.AdminProfileName)
+                if (profile.Name == Profile.AdminProfileName)
                     return true;
             }
             return false;
-    
+
         }
 
 
@@ -44,36 +44,40 @@ namespace DbManager.Security
         public bool IsPasswordCorrect(string username, string password)
         {
             //TODO DEADLINE 5: Return true if the user's password is correct. The given password should be encrypted before comparing with the saved one
-            
+
             User obj = UserByName(username);
 
             if (obj == null)
             {
-               return false;
+                return false;
             }
             return obj.EncryptedPassword == Encryption.Encrypt(password);
-            
+
         }
-            
-            
-        
+
+
+
 
         // Endika
         public void GrantPrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-      
 
-            if (profileName==null || table==null)
+            if (IsUserAdmin())
             {
-                return ;
+                Profile profile = ProfileByName(profileName);
+
+
+                if (profileName == null || table == null)
+                {
+                    return;
+                }
+                if (profile != null)
+                {
+                    profile.GrantPrivilege(table, privilege);
+                }
             }
-            Profile profile = ProfileByName(profileName);
-            if (profile != null)
-            {
-                profile.GrantPrivilege(table, privilege);
-            }     
         }
 
         // Unai
@@ -82,16 +86,20 @@ namespace DbManager.Security
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
 
-            if (profileName == null || table == null)
+            if (IsUserAdmin())
             {
-                return;
-            }
+                Profile profile = ProfileByName(profileName);
 
-            Profile profile = ProfileByName(profileName);
+                if (profileName == null || table == null)
+                {
+                    return;
+                }
 
-            if (profile != null)
-            {
-                profile.RevokePrivilege(table, privilege);
+
+                if (profile != null)
+                {
+                    profile.RevokePrivilege(table, privilege);
+                }
             }
         }
 
@@ -100,16 +108,19 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
 
-                        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
-            {
-                return false;
+            
+            
+            
+            if (username == null) {
+              return false; 
             }
 
-            Profile profile = ProfileByUser(username);
-            if (profile == null)
+            if (ProfileByUser(username) != null)
             {
-                return false;
-            }
+
+                Profile profile = ProfileByUser(username);
+
+           
 
             if (profile.Name == Profile.AdminProfileName)
             {
@@ -117,13 +128,16 @@ namespace DbManager.Security
             }
 
             return profile.IsGrantedPrivilege(table, privilege);
-
-
-
+            }
+             return false;
         }
 
-        // Aitana
-        public void AddProfile(Profile profile)
+
+
+
+
+// Aitana
+public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
 
