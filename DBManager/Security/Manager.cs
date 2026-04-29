@@ -85,7 +85,6 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            if (!IsUserAdmin()) return;
 
             if (IsUserAdmin())
             {

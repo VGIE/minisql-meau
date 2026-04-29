@@ -288,7 +288,7 @@ namespace DbManager
                         }
                     }
                 }
-                SecurityManager.Save(Path.Combine(path, "security.dat"));
+                SecurityManager.Save(Path.Combine(path, "security.json"));
                 return true;
             }
             catch (Exception ex)
@@ -342,7 +342,7 @@ namespace DbManager
                         }
                     }
                 }
-                string secFile = Path.Combine(path, "security.dat");
+                string secFile = Path.Combine(path, "security.json");
                 if (!File.Exists(secFile))
                 {
                     db.SecurityManager = new Manager("system");
