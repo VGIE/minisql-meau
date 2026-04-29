@@ -246,55 +246,31 @@ namespace DbManager.Security
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.json");
+            Manager manager = new Manager(username);
+
+            if (!File.Exists(filePath)) return manager;
+
             try
             {
-                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.dat");
+                string jsonString = File.ReadAllText(filePath);
+                var options = new JsonSerializerOptions
+                {
+                    IncludeFields = true,
+                    PropertyNameCaseInsensitive = true
+                };
 
-                if (!File.Exists(path)) return new Manager(username);
-
-                string jsonString = File.ReadAllText(path);
-
-                List<Profile> loadedProfiles = JsonSerializer.Deserialize<List<Profile>>(jsonString);
-
-                Manager manager = new Manager(username);
+                List<Profile> loadedProfiles = JsonSerializer.Deserialize<List<Profile>>(jsonString, options);
                 if (loadedProfiles != null)
                 {
-                    manager.Profiles = loadedProfiles;
-
-                    JsonArray jsonArray = JsonNode.Parse(jsonString).AsArray();
-                    for (int i = 0; i < loadedProfiles.Count; i++)
-                    {
-                        var privsNode = jsonArray[i]?["PrivilegesOn"]?.AsObject();
-                        if (privsNode != null)
-                        {
-                            foreach (var tableNode in privsNode)
-                            {
-                                string tableName = tableNode.Key;
-                                var privArray = tableNode.Value?.AsArray();
-                                if (privArray != null)
-                                {
-                                    foreach (var privNode in privArray)
-                                    {
-                                        Privilege p = (Privilege)privNode.GetValue<int>();
-                                        loadedProfiles[i].GrantPrivilege(tableName, p);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (manager.UserByName(username) == null)
-                    {
-                        return null;
-                    }
-
+                    manager.Profiles.Clear();
+                    manager.Profiles.AddRange(loadedProfiles);
                 }
-
                 return manager;
             }
             catch (Exception)
             {
-                return null;
+                return manager;
             }
 
         }
@@ -304,75 +280,25 @@ namespace DbManager.Security
         {
             //commit para creacion de rama 
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            if (!IsUserAdmin())
-            {
-                return;
-            }
-
             try
             {
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                Directory.CreateDirectory(folder);
-                string path = Path.Combine(folder, "security.dat");
-                using (StreamWriter sw = new StreamWriter(path, false))
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                string filePath = Path.Combine(folder, "security.json");
+
+                var options = new JsonSerializerOptions
                 {
-                    foreach (Profile profile in Profiles)
-                    {
-                        if (profile == null)
-                        {
-                            continue;
-                        }
-                        foreach (User user in profile.Users)
-                        {
-                            if (user == null)
-                            {
-                                continue;
-                                string privileges = "";
-                                if (profile.IsGrantedPrivilege("Users", Privilege.Select))
-                                {
-                                    if (privileges != "")
-                                    {
-                                        privileges += "/";
-                                    }
-                                    privileges += Privilege.Select.ToString();
-                                }
-                                if (profile.IsGrantedPrivilege("Users", Privilege.Insert))
-                                {
-                                    if (privileges != "")
-                                    {
-                                        privileges += "/";
-                                    }
-                                    privileges += Privilege.Insert.ToString();
-                                }
-                                if (profile.IsGrantedPrivilege("Users", Privilege.Delete))
-                                {
-                                    if (privileges != "")
-                                    {
-                                        privileges += "/";
-                                    }
-                                    privileges += Privilege.Delete.ToString();
-                                }
-                                if (profile.IsGrantedPrivilege("Users", Privilege.Update))
-                                {
-                                    if (privileges != "")
-                                    {
-                                        privileges += "/";
-                                    }
-                                    privileges += Privilege.Update.ToString();
-                                }
-                                if (privileges != "")
-                                {
-                                    sw.WriteLine(user.Username + "," + user.EncryptedPassword + "," + profile.Name + ",Users," + privileges);
-                                }
-                            }
-                        }
-                    }
-                }
-                ;
+                    WriteIndented = true,
+                    IncludeFields = true
+                };
+
+                string jsonString = JsonSerializer.Serialize(this.Profiles, options);
+                File.WriteAllText(filePath, jsonString);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return;
+                throw;
             }
         }
     }
