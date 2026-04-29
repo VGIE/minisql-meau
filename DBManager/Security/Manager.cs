@@ -153,17 +153,13 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
 
-            if (username == null)
+            foreach(var p in Profiles)
             {
-                return null;
-            }
-            foreach (Profile p in Profiles)
-            {
-                foreach (User u in p.Users)
+                foreach (User us in p.Users)
                 {
-                    if (u.Username.Equals(username))
+                    if (us.Username == username)
                     {
-                        return u;
+                        return us;
                     }
                 }
             }
@@ -179,13 +175,12 @@ namespace DbManager.Security
             {
                 return null;
             }
-            foreach (Profile p in Profiles)
+            foreach(var p in Profiles)
             {
-                if (p.Name.Equals(profileName))
+                if(p.Name==profileName)
                     return p;
             }
             return null;
-
         }
 
         // Unai
