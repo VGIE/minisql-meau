@@ -263,6 +263,31 @@ namespace DbManager.Security
                 List<Profile> loadedProfiles = JsonSerializer.Deserialize<List<Profile>>(jsonString, options);
                 if (loadedProfiles != null)
                 {
+                    JsonNode root = JsonNode.Parse(jsonString);
+                    if (root != null)
+                    {
+                        JsonArray profilesArray = root.AsArray();
+
+                        for (int i = 0; i < loadedProfiles.Count; i++)
+                        {
+                            var profileNode = profilesArray[i];
+                            if (profileNode["PrivilegesOn"] != null)
+                            {
+                                var privilegesObject = profileNode["PrivilegesOn"].AsObject();
+                                foreach (var prop in privilegesObject)
+                                {
+                                    string table = prop.Key;
+                                    var privilegesArray = prop.Value.AsArray();
+                                    foreach (var privNode in privilegesArray)
+                                    {
+                                        int privVal = privNode.GetValue<int>();
+                                        loadedProfiles[i].GrantPrivilege(table, (Privilege)privVal);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     manager.Profiles.Clear();
                     manager.Profiles.AddRange(loadedProfiles);
                 }
