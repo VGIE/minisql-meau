@@ -111,6 +111,7 @@ namespace OurTests.SecurityTests
 
             Manager managerToSave = new Manager(testUser);
             Profile profileToSave = new Profile { Name = "AdminProfile" };
+            profileToSave.Users.Add(new User(testUser, "password123"));
             profileToSave.GrantPrivilege("UsersTable", Privilege.Select);
             profileToSave.GrantPrivilege("UsersTable", Privilege.Insert);
             managerToSave.Profiles.Add(profileToSave);
@@ -242,7 +243,7 @@ namespace OurTests.SecurityTests
             userProfile.Users.Add(user);
             userProfile.GrantPrivilege("Users", Privilege.Select);
 
-            Manager normalManager = new Manager("admin");
+            Manager normalManager = new Manager("user");
             normalManager.Profiles.Add(userProfile);
 
             Assert.True(normalManager.IsGrantedPrivilege("user", "Users", Privilege.Select));

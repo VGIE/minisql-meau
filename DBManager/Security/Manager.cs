@@ -85,6 +85,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
+            if (!IsUserAdmin()) return;
 
             if (IsUserAdmin())
             {
@@ -160,31 +161,35 @@ public void AddProfile(Profile profile)
         public User UserByName(string username)
         {
             //TODO DEADLINE 5: Return the user by name. If it doesn't exist, return null
-             foreach(Profile p in Profiles)
+
+            foreach(var p in Profiles)
             {
-                foreach(User u in p.Users)
+                foreach (User us in p.Users)
                 {
-                    if (username.Equals(u.Username))
+                    if (us.Username == username)
                     {
-                        return u;
+                        return us;
                     }
                 }
             }
             return null;
-            
+
         }
 
         // Maialen
         public Profile ProfileByName(string profileName)
         {
             //TODO DEADLINE 5: Return the profile by name. If it doesn't exist, return null
-           foreach(var p in Profiles)
+            if (string.IsNullOrEmpty(profileName))
+            {
+                return null;
+            }
+            foreach(var p in Profiles)
             {
                 if(p.Name==profileName)
                     return p;
             }
             return null;
-            
         }
 
         // Unai
@@ -215,15 +220,15 @@ public void AddProfile(Profile profile)
             }
 
             return profile;
-            
+
         }
 
         // Aitana
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            
-  
+
+
             if (IsUserAdmin())
             {
                 Profile profile = ProfileByName(profileName);
@@ -233,7 +238,7 @@ public void AddProfile(Profile profile)
 
                     Profiles.Remove(profile);
                     return true;
-                    
+
                 }
             }
 
@@ -245,49 +250,56 @@ public void AddProfile(Profile profile)
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.json");
+            Manager manager = new Manager(username);
+
+            if (!File.Exists(filePath)) return manager;
+
             try
             {
-                string path = Path.Combine(Directory.GetCurrentDirectory(), databaseName, "security.dat");
-
-                if (!File.Exists(path)) return new Manager(username);
-
-                string jsonString = File.ReadAllText(path);
-
-                List<Profile> perfilesCargados = JsonSerializer.Deserialize<List<Profile>>(jsonString);
-
-                Manager manager = new Manager(username);
-                if (perfilesCargados != null)
+                string jsonString = File.ReadAllText(filePath);
+                var options = new JsonSerializerOptions
                 {
-                    manager.Profiles = perfilesCargados;
+                    IncludeFields = true,
+                    PropertyNameCaseInsensitive = true
+                };
 
-                    JsonArray jsonArray = JsonNode.Parse(jsonString).AsArray();
-                    for (int i = 0; i < perfilesCargados.Count; i++)
+                List<Profile> loadedProfiles = JsonSerializer.Deserialize<List<Profile>>(jsonString, options);
+                if (loadedProfiles != null)
+                {
+                    JsonNode root = JsonNode.Parse(jsonString);
+                    if (root != null)
                     {
-                        var privsNode = jsonArray[i]?["PrivilegesOn"]?.AsObject();
-                        if (privsNode != null)
+                        JsonArray profilesArray = root.AsArray();
+
+                        for (int i = 0; i < loadedProfiles.Count; i++)
                         {
-                            foreach (var tableNode in privsNode)
+                            var profileNode = profilesArray[i];
+                            if (profileNode["PrivilegesOn"] != null)
                             {
-                                string tableName = tableNode.Key;
-                                var privArray = tableNode.Value?.AsArray();
-                                if (privArray != null)
+                                var privilegesObject = profileNode["PrivilegesOn"].AsObject();
+                                foreach (var prop in privilegesObject)
                                 {
-                                    foreach (var privNode in privArray)
+                                    string table = prop.Key;
+                                    var privilegesArray = prop.Value.AsArray();
+                                    foreach (var privNode in privilegesArray)
                                     {
-                                        Privilege p = (Privilege)privNode.GetValue<int>();
-                                        perfilesCargados[i].GrantPrivilege(tableName, p);
+                                        int privVal = privNode.GetValue<int>();
+                                        loadedProfiles[i].GrantPrivilege(table, (Privilege)privVal);
                                     }
                                 }
                             }
                         }
                     }
-                }
 
+                    manager.Profiles.Clear();
+                    manager.Profiles.AddRange(loadedProfiles);
+                }
                 return manager;
             }
             catch (Exception)
             {
-                return null;
+                return manager;
             }
 
         }
@@ -295,22 +307,26 @@ public void AddProfile(Profile profile)
         // Endika
         public void Save(string databaseName)
         {
-            //commit para creacion de rama 
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
             try
             {
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), databaseName);
-                Directory.CreateDirectory(folder);
-                string path = Path.Combine(folder, "security.dat");
-                JsonSerializerOptions options = new JsonSerializerOptions
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                string filePath = Path.Combine(folder, "security.json");
+
+                var options = new JsonSerializerOptions
                 {
-                    WriteIndented = true
+                    WriteIndented = true,
+                    IncludeFields = true
                 };
-                string json = JsonSerializer.Serialize(Profiles, options);
-                File.WriteAllText(path, json);
-            }catch (Exception ex)
+
+                string jsonString = JsonSerializer.Serialize(this.Profiles, options);
+                File.WriteAllText(filePath, jsonString);
+            }
+            catch (Exception)
             {
-                return;
+                throw;
             }
         }
     }
