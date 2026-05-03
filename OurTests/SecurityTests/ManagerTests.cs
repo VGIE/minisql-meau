@@ -243,7 +243,7 @@ namespace OurTests.SecurityTests
             userProfile.Users.Add(user);
             userProfile.GrantPrivilege("Users", Privilege.Select);
 
-            Manager normalManager = new Manager("admin");
+            Manager normalManager = new Manager("user");
             normalManager.Profiles.Add(userProfile);
 
             Assert.True(normalManager.IsGrantedPrivilege("user", "Users", Privilege.Select));

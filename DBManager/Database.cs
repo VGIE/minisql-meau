@@ -22,7 +22,7 @@ namespace DbManager
         private Database() // Maialen
         {
 
-
+            Tables = new List<Table>();
         }
 
         public Database(string adminUsername, string adminPassword) // Maialen
@@ -239,7 +239,14 @@ namespace DbManager
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
 
+            if(!SecurityManager.IsGrantedPrivilege(m_username, tableName, Privilege.Update))
+            {
+                LastErrorMessage = Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+                return false;
+            }
+
             Table table = TableByName(tableName);
+
             if (table == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
@@ -255,6 +262,7 @@ namespace DbManager
 
 
             table.Update(columnNames, columnCondition);
+            LastErrorMessage = Constants.UpdateSuccess;
 
             return true;
         }
@@ -288,7 +296,7 @@ namespace DbManager
                         }
                     }
                 }
-                SecurityManager.Save(Path.Combine(path, "security.dat"));
+                SecurityManager.Save(databaseName);
                 return true;
             }
             catch (Exception ex)
@@ -342,7 +350,7 @@ namespace DbManager
                         }
                     }
                 }
-                string secFile = Path.Combine(path, "security.dat");
+                string secFile = Path.Combine(path, "security.json");
                 if (!File.Exists(secFile))
                 {
                     db.SecurityManager = new Manager("system");
