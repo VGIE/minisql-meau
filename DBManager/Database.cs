@@ -356,7 +356,7 @@ namespace DbManager
                     db.SecurityManager = new Manager("system");
                     return db;
                 }
-                db.SecurityManager = Manager.Load(secFile, username);
+                db.SecurityManager = Manager.Load(databaseName, username);
                 if (db.SecurityManager == null || !db.SecurityManager.IsPasswordCorrect(username, password))
                 {
                     return null;
