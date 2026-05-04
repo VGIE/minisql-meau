@@ -111,7 +111,24 @@ namespace DbManager.Network
         public string SendQuery(string query)
         {
             //DEADLINE 6: Send a Query command to the server using SendString
-            
+            string cmnd = XmlSerializer.Query(query);
+            string resp= SendString(cmnd);
+
+            if (resp==null)
+            {
+                return "No server response.";
+            }
+
+            string content;
+            bool sucs = XmlDeserializer.ParseQueryAnswer(resp,out content);
+            if(sucs)
+            {
+                return content;
+            }
+            else
+            {
+                return "error";
+            }
             return null;
             
         }
