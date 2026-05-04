@@ -25,7 +25,7 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, PrivilegeDoesNotExistError, GrantPrivilegeSuccess, ProfileAlreadyHasPrivilege
-            /*if (database == null)
+            if (database == null)
             {
                 return Constants.Error;
             }
@@ -47,7 +47,7 @@ namespace DbManager
                 return Constants.ProfileAlreadyHasPrivilege;
             }
             database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilege);
-            return Constants.GrantPrivilegeSuccess;*/
+            return Constants.GrantPrivilegeSuccess;
             return null;
             
         }
