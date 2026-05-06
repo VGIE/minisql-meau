@@ -76,7 +76,7 @@ namespace DbManager.Network
                 }
                 catch (Exception)
                 {
-                    return "<Error>Error al abrir la base de datos</Error>";
+                    return "<Error>Error opening data base</Error>";
 
                 }
             }
@@ -88,7 +88,7 @@ namespace DbManager.Network
                 }
                 catch (Exception)
                 {
-                    return "<Error>Error al crear la base de datos</Error>";
+                    return "<Error>Error creating data base</Error>";
                 }
             }
             if (xml.Contains("<Query>"))
@@ -99,7 +99,7 @@ namespace DbManager.Network
                 }
                 catch (Exception)
                 {
-                    return "<Answer><Error>Error en la consulta</Error></Answer>";
+                    return "<Answer><Error>Error at query </Error></Answer>";
                 }
             }
 
