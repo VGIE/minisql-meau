@@ -19,7 +19,10 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Grant this privilege on this table. Return false if there is an error, true otherwise
 
-
+            if (table == null)
+            {
+                return false;
+            }
 
             if (!PrivilegesOn.ContainsKey(table))
             {
