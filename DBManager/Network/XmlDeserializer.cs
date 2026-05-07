@@ -15,11 +15,23 @@ namespace DbManager.Network
         {
             //TODO DEADLINE 6: Try to parse the xml command using the specified xml format (eGela)
             //Return true if 'command' is an Open statement, false otherwise. If true, set the value of database, username and password
-            
+
             database = null;
             username = null;
             password = null;
-            
+
+            string pattern = @"^<Open\s+Database=""(?<Database>[^""]+)""\s+User=""(?<User>[^""]+)""\s+Password=""(?<Password>[^""]+)""\s*/>$";
+            Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            Match match = regex.Match(command);
+
+            if (match.Success)
+            {
+                database = match.Groups["Database"].Value;
+                username = match.Groups["User"].Value;
+                password = match.Groups["Password"].Value;
+                return true;
+            }
+
             return false;
         }
 
@@ -29,8 +41,25 @@ namespace DbManager.Network
             //TODO DEADLINE 6: Try to parse the answer to an Open/Create command.
             //Return true if 'command' is equal to XmlSerializer.OpenCreateSuccess
             //If it is an error (<Error>...</Error>), return false and set 'error' with the error message
-            
+
             error = null;
+
+            if (string.IsNullOrEmpty(answer))
+                return false;
+
+            if (answer == XmlSerializer.OpenCreateSuccess)
+                return true;
+
+            string patternError = @"^<Error>(?<Error>.+)</Error>$";
+            Regex regexError = new Regex(patternError, RegexOptions.IgnoreCase);
+            Match matchError = regexError.Match(answer);
+
+            if (matchError.Success)
+            {
+                error = matchError.Groups["Error"].Value;
+                return false;
+            }
+
             return false;
         }
 
