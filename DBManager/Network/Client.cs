@@ -71,9 +71,30 @@ namespace DbManager.Network
         {
             //DEADLINE 6: Send an Open command to the server using SendString
             
+
+
             error = null;
-            return false;
-            
+
+            try
+            {
+                string command = XmlSerializer.OpenDatabase(database, username, password);
+                string response = SendString(command);
+
+                if (response == null)
+                {
+                    error = "Server error.";
+                    return false;
+                }
+
+                return XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+            }
+            catch
+            {
+                error = "Connection error.";
+                return false;
+            }
+
+
         }
 
         // Endika
@@ -116,7 +137,11 @@ namespace DbManager.Network
         public void Close()
         {
             //DEADLINE 6: Send a Close command to the server using SendString and close the connection to the server
-            
+           
+            string command = XmlSerializer.CloseConnection;
+            SendString(command);
+            m_tcpClient.Close();
+
         }
     }
 }
