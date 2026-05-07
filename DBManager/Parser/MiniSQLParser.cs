@@ -15,7 +15,7 @@ namespace DbManager
 
             RegexOptions options = RegexOptions.Singleline;
 
-            const string selectPattern = @"^SELECT\s+(?<columns>\*|[a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+(?<table>[a-zA-Z0-9]+)(?:\s+WHERE\s+(?<condition>\w+\s*(?:=|<|>)\s*(?:'[^']*'|[-]?\d+(?:\.\d+)?)))?$"; ;
+            const string selectPattern = @"^SELECT\s+(?<columns>\*|[a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+(?<table>[a-zA-Z0-9]+)(?:\s+WHERE\s+(?<condition>\w+\s*(?:=|<|>)\s*(?:'[^']*'|'[-]?\d+(?:\.\d+)?')))?$";
 
             const string insertPattern = @"^INSERT\s+INTO\s+(?<table>\w+)\s+VALUES\s*\((?<values>('[-]?\d+(\.\d+)?'|'[^']+')(?:,('[-]?\d+(\.\d+)?'|'[^']+'))*)\)$";
 
@@ -50,7 +50,7 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            const string conditionPattern = @"^\s*(?<colname>\w+)(?<operator>[<>=])(?<value>'[-]?\d+(\.\d+)?'|'[^']+'|[-]?\d+(\.\d+)?)\s*$";
+            const string conditionPattern = @"^\s*(?<colname>\w+)(?<operator>[<>=])(?<value>'[-]?\d+(\.\d+)?'|'[^']+'|'[-]?\d+(\.\d+)?')\s*$";
             const string columnDefinitionPattern = @"^\s*(?<colname>\w+)\s+(?<type>INT|DOUBLE|TEXT)\s*$";
             const string setValuePattern = @"^(?<colname>\w+)=(?<value>'[-]?\d+(\.\d+)?'|'[^']+')\s*$";
 
