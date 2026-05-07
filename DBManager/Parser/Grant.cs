@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DbManager.Parser;
+using DbManager.Security;
 
 namespace DbManager
 {
- 
+
     // Endika
     public class Grant : MiniSqlQuery
     {
@@ -19,7 +20,7 @@ namespace DbManager
             this.PrivilegeName = privilegeName;
             this.TableName = tableName;
             this.ProfileName = profileName;
-            
+
         }
         public string Execute(Database database)
         {
@@ -33,23 +34,41 @@ namespace DbManager
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
-            if(database.SecurityManager.ProfileByName(ProfileName)==null)
+            if (database.SecurityManager.ProfileByName(ProfileName) == null)
             {
                 return Constants.SecurityProfileDoesNotExistError;
             }
             DbManager.Security.Privilege privilege;
-            if(!Enum.TryParse(PrivilegeName, out privilege))
+            string upperPrivilege = PrivilegeName.ToUpper();
+            if (upperPrivilege == "SELECT")
+            {
+                privilege = DbManager.Security.Privilege.Select;
+            }
+            else if (upperPrivilege == "INSERT")
+            {
+                privilege = DbManager.Security.Privilege.Insert;
+            }
+            else if (upperPrivilege == "UPDATE")
+            {
+                privilege = DbManager.Security.Privilege.Update;
+            }
+            else if (upperPrivilege == "DELETE")
+            {
+                privilege = DbManager.Security.Privilege.Delete;
+            }
+            else
             {
                 return Constants.PrivilegeDoesNotExistError;
             }
-            if(database.SecurityManager.IsGrantedPrivilege(ProfileName,TableName, privilege))
+
+            if (database.SecurityManager.IsGrantedPrivilege(ProfileName, TableName, privilege))
             {
                 return Constants.ProfileAlreadyHasPrivilege;
             }
             database.SecurityManager.GrantPrivilege(ProfileName, TableName, privilege);
             return Constants.GrantPrivilegeSuccess;
-            return null;
             
+
         }
 
     }
