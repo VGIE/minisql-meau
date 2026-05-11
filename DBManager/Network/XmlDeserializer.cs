@@ -83,6 +83,18 @@ namespace DbManager.Network
             //Return true if 'command' is a Query statement, false otherwise. If true, set the value of query with the content of the command
             
             query = null;
+            if(string.IsNullOrEmpty(answer))
+            {
+                return false;
+            }
+            string pattern= @"^<Query>(?<Query>[\s\S]*)</Query>$";
+            Regex regex= new Regex(pattern, RegexOptions.IgnoreCase);
+            Match match = regex.Match(answer);
+            if (match.Success)
+            {
+                query=match.Groups["query"].Value;
+                return true;
+            }
             return false;
         }
 
@@ -94,7 +106,20 @@ namespace DbManager.Network
             //If it is an error (<Error>...</Error>), return false and set 'answerContent' with the error message
             
             answerContent = null;
-            return false;
+            if (string.IsNullOrEmpty(answer))
+            {
+                return false;
+            }
+            string patternError = @"^<Error>(?<Error>[\s\S]*)</Error>$";
+            Regex regexError = new Regex(patternError, RegexOptions.IgnoreCase);
+            Match matchError = regexError.Match(answer);
+            if (matchError.Success)
+            {
+                answerContent = matchError.Groups["Error"].Value;
+                return false;
+            }
+            answerContent = answer;
+            return true;
         }
 
         public static bool IsCloseCommand(string command)
