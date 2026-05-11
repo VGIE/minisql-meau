@@ -19,5 +19,14 @@ namespace OurTests.networkTests
             Assert.Equal("admin", user);
             Assert.Equal("password123", pass);
         }
+
+        [Fact]
+        public void ParseQueryTest()
+        {
+            string command = "<Query>SELECT * FROM Users</Query>";
+            bool result = XmlDeserializer.ParseQuery(command, out string query);
+            Assert.True(result);
+            Assert.Equal(string.Empty, query);
+        }
     }
 }

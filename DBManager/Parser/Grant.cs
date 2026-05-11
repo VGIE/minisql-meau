@@ -40,10 +40,10 @@ namespace DbManager
             }
             DbManager.Security.Privilege privilege;
             string upperPrivilege = PrivilegeName.ToUpper();
-            string select = "SELECT";
-            string insert = "INSERT";
-            string update = "UPDATE";
-            string delete = "DELETE";
+            const string select = "SELECT";
+            const string insert = "INSERT";
+            const string update = "UPDATE";
+            const string delete = "DELETE";
 
             if (upperPrivilege == select)
             {

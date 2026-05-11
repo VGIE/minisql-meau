@@ -42,7 +42,7 @@ namespace OurTests.parseTests
         [Fact]
         public void IncorrectWithoutTo()
         {
-            Assert.Null(MiniSQLParser.Parse("GRANT SELECT ON Users TO admin"));
+            Assert.Null(MiniSQLParser.Parse("GRANT SELECT ON Users admin"));
         }
         [Fact]
         public void IncorrectWithoutPrivilege()
