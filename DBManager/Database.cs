@@ -173,6 +173,12 @@ namespace DbManager
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
+            if (!SecurityManager.IsGrantedPrivilege(m_username, tableName, Privilege.Select))
+            {
+                LastErrorMessage = Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+                return null;
+            }
+
             Table table = TableByName(tableName);
             if (table == null)
             {
@@ -204,8 +210,12 @@ namespace DbManager
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
+            if (!SecurityManager.IsGrantedPrivilege(m_username, tableName, Privilege.Delete))
+            {
+                LastErrorMessage = Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+                return false;
+            }
 
-            // Check for table
             Table selectedTable = TableByName(tableName);
 
             if (selectedTable == null)
@@ -214,14 +224,12 @@ namespace DbManager
                 return false;
             }
 
-            // Check for column
             if (selectedTable.ColumnIndexByName(columnCondition.ColumnName) == -1)
             {
                 LastErrorMessage = Constants.ColumnDoesNotExistError;
                 return false;
             }
 
-            // Final removal
             for (int i = selectedTable.NumRows() - 1; i >= 0; i--)
             {
                 if (selectedTable.GetRow(i).IsTrue(columnCondition))
