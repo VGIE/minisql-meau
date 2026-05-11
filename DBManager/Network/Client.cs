@@ -103,7 +103,22 @@ namespace DbManager.Network
             //DEADLINE 6: Send a Create command to the server using SendString
             
             error = null;
-            return false;
+            try
+            {
+                string command = XmlSerializer.CreateDatabase(database, username, password);
+                string response = SendString(command);
+                if(response==null)
+                {
+                    error = "Server error.";
+                    return false;
+                }
+                return XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+            }
+            catch
+            {
+                error = "Connection error.";
+                return false;
+            }
             
         }
 

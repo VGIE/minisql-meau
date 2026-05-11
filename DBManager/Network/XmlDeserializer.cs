@@ -16,9 +16,23 @@ namespace DbManager.Network
             //TODO DEADLINE 6: Try to parse the xml command using the specified xml format (eGela)
             //Return true if 'command' is an Open statement, false otherwise. If true, set the value of database, username and password
 
+
             database = null;
             username = null;
             password = null;
+
+            string pattern = @"^<Open\s+Database=""(?<Database>[^""]+)""\s+User=""(?<User>[^""]+)""\s+Password=""(?<Password>[^""]+)""\s*/>$";
+            Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            Match match = regex.Match(command);
+
+            if (match.Success)
+            {
+                database = match.Groups["Database"].Value;
+                username = match.Groups["User"].Value;
+                password = match.Groups["Password"].Value;
+                return true;
+            }
+
 
             return false;
         }
@@ -30,7 +44,25 @@ namespace DbManager.Network
             //Return true if 'command' is equal to XmlSerializer.OpenCreateSuccess
             //If it is an error (<Error>...</Error>), return false and set 'error' with the error message
 
+
             error = null;
+
+            if (string.IsNullOrEmpty(answer))
+                return false;
+
+            if (answer == XmlSerializer.OpenCreateSuccess)
+                return true;
+
+            string patternError = @"^<Error>(?<Error>.+)</Error>$";
+            Regex regexError = new Regex(patternError, RegexOptions.IgnoreCase);
+            Match matchError = regexError.Match(answer);
+
+            if (matchError.Success)
+            {
+                error = matchError.Groups["Error"].Value;
+                return false;
+            }
+
             return false;
         }
 
@@ -76,6 +108,18 @@ namespace DbManager.Network
             //Return true if 'command' is a Query statement, false otherwise. If true, set the value of query with the content of the command
 
             query = null;
+            if(string.IsNullOrEmpty(answer))
+            {
+                return false;
+            }
+            string pattern= @"^<Query>(?<Query>[\s\S]*)</Query>$";
+            Regex regex= new Regex(pattern, RegexOptions.IgnoreCase);
+            Match match = regex.Match(answer);
+            if (match.Success)
+            {
+                query=match.Groups["query"].Value;
+                return true;
+            }
             return false;
         }
 
@@ -87,7 +131,20 @@ namespace DbManager.Network
             //If it is an error (<Error>...</Error>), return false and set 'answerContent' with the error message
 
             answerContent = null;
-            return false;
+            if (string.IsNullOrEmpty(answer))
+            {
+                return false;
+            }
+            string patternError = @"^<Error>(?<Error>[\s\S]*)</Error>$";
+            Regex regexError = new Regex(patternError, RegexOptions.IgnoreCase);
+            Match matchError = regexError.Match(answer);
+            if (matchError.Success)
+            {
+                answerContent = matchError.Groups["Error"].Value;
+                return false;
+            }
+            answerContent = answer;
+            return true;
         }
 
         public static bool IsCloseCommand(string command)
