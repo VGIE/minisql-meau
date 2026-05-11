@@ -28,5 +28,18 @@ namespace OurTests.networkTests
             Assert.True(result);
             Assert.Equal(string.Empty, query);
         }
+
+        [Fact]
+        public void ParseOpenTest()
+        {
+            string command = "<Open Database=\"MyDb\" User=\"admin\" Password=\"password123\"/>";
+
+            bool result = XmlDeserializer.ParseOpen(command, out string db, out string user, out string pass);
+
+            Assert.True(result);
+            Assert.Equal("MyDb", db);
+            Assert.Equal("admin", user);
+            Assert.Equal("password123", pass);
+        }
     }
 }
