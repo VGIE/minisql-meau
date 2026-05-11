@@ -11,6 +11,7 @@ using System.Xml;
 using DbManager;
 using System.IO;
 using System.Xml.Serialization;
+using System.Linq.Expressions;
 
 namespace DbManager.Network
 {
@@ -25,90 +26,46 @@ namespace DbManager.Network
             //Use XmlSerializer to create Xml commands
 
             TcpListener listen = new TcpListener(IPAddress.Any, port);
-
+            listen.Start();
             while (true)
             {
                 using (TcpClient client = listen.AcceptTcpClient())
                 using (NetworkStream stream = client.GetStream())
-                using (StreamReader reader = new StreamReader(stream))
-                using (StreamWriter writer = new StreamWriter(stream))
                 {
                     bool con = true;
                     while (con)
                     {
                         try
                         {
-                            string xmlRequest = reader.ReadLine();
-                            if (string.IsNullOrEmpty(xmlRequest))
+                            StreamReader read = new StreamReader(stream);
+                            string xmlReq = read.ReadLine();
+                            string responseXml = "";
+
+                            if (xmlReq.Contains("<Create"))
+                            {
+                                responseXml = XmlSerializer.CreateSuccess;
+                            }
+                            else if (xmlReq.Contains("<Open"))
+                            {
+                                responseXml = XmlSerializer.OpenCreateSuccess;
+                            }
+                            else if (xmlReq.Contains("<Query"))
+                            {
+                                responseXml = XmlSerializer.SucessfulAnswer("Execute query");
+                            }
+                            else if (xmlReq.Contains("<Close"))
                             {
                                 con = false;
+                                responseXml = XmlSerializer.OpenCreateSuccess;
                             }
-                            else
-                            {
-                                string response = ProcessRequest(xmlRequest);
-                                writer.WriteLine(response);
-                                writer.Flush();
-                                if (xmlRequest.Contains("<Close/>"))
-                                {
-                                    con = false;
-                                }
-                            }
-
                         }
                         catch (Exception e)
                         {
-                            writer.WriteLine($"<Error>{e.Message}</Error>");
-                            writer.Flush();
                             con = false;
                         }
                     }
                 }
             }
-        }
-
-        private string ProcessRequest(string xml)
-        {
-            if (xml.Contains("<Open"))
-            {
-                try
-                {
-                    return "<Success/>";
-                }
-                catch (Exception)
-                {
-                    return "<Error>Error opening data base</Error>";
-
-                }
-            }
-            if (xml.Contains("<Create"))
-            {
-                try
-                {
-                    return "<Success/>";
-                }
-                catch (Exception)
-                {
-                    return "<Error>Error creating data base</Error>";
-                }
-            }
-            if (xml.Contains("<Query>"))
-            {
-                try
-                {
-                    return "<Answer>[Name,Surname]{Unai,Lobete}{Maialen,Mateos}</Answer>";
-                }
-                catch (Exception)
-                {
-                    return "<Answer><Error>Error at query </Error></Answer>";
-                }
-            }
-
-            if (xml.Contains("<Close/>"))
-            {
-                return "<Success/>";
-            }
-
-            return "<Error>Unknown Command</Error>";
         }
     }
 }
