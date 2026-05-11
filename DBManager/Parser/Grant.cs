@@ -40,24 +40,20 @@ namespace DbManager
             }
             DbManager.Security.Privilege privilege;
             string upperPrivilege = PrivilegeName.ToUpper();
-            string select = "SELECT";
-            string insert = "INSERT";
-            string update = "UPDATE";
-            string delete = "DELETE";
-
-            if (upperPrivilege == select)
+            
+            if (upperPrivilege == "SELECT")
             {
                 privilege = DbManager.Security.Privilege.Select;
             }
-            else if (upperPrivilege == insert)
+            else if (upperPrivilege == "INSERT")
             {
                 privilege = DbManager.Security.Privilege.Insert;
             }
-            else if (upperPrivilege == update)
+            else if (upperPrivilege == "UPDATE")
             {
                 privilege = DbManager.Security.Privilege.Update;
             }
-            else if (upperPrivilege == delete)
+            else if (upperPrivilege == "DELETE")
             {
                 privilege = DbManager.Security.Privilege.Delete;
             }
