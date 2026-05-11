@@ -107,10 +107,6 @@ namespace DbManager.Security
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
-
-            
-            
-            
             if (username == null) {
               return false; 
             }
@@ -136,12 +132,10 @@ namespace DbManager.Security
 
 
 
-// Aitana
-public void AddProfile(Profile profile)
+        // Aitana
+        public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
-
-
             if (IsUserAdmin())
             {
                 if (profile != null)
