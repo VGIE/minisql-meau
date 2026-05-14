@@ -27,8 +27,12 @@ namespace DbManager.Parser
             { 
                 return Constants.Error;
             }
-            database.DeleteWhere(Table, Where);
-            return Constants.DeleteSuccess;
+            bool success = database.DeleteWhere(Table, Where);
+            if (success)
+            {
+                return Constants.DeleteSuccess;
+            }
+            return database.LastErrorMessage;
         }
     }
 }
