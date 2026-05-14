@@ -41,5 +41,16 @@ namespace OurTests.networkTests
             Assert.Equal("admin", user);
             Assert.Equal("password123", pass);
         }
+
+        [Fact]
+        public void ParseOpenCreateAnswerTest()
+        {
+            string answer = "<Success/>";
+
+            bool result = XmlDeserializer.ParseOpenCreateAnswer(answer, out string error);
+
+            Assert.True(result);
+            Assert.Null(error);
+        }
     }
 }
