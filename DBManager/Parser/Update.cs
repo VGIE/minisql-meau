@@ -26,8 +26,12 @@ namespace DbManager
             { 
                 return Constants.Error;
             }
-            database.Update(Table, Columns, Where);
-            return Constants.UpdateSuccess;
+            bool success = database.Update(Table, Columns, Where);
+            if (success)
+            {
+                return Constants.UpdateSuccess;
+            }
+            return database.LastErrorMessage;
         } 
     }
 }

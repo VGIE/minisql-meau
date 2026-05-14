@@ -52,5 +52,17 @@ namespace OurTests.networkTests
             Assert.True(result);
             Assert.Null(error);
         }
+        [Fact]
+        public void ParseQueryAnswerTest()
+        {
+            string goodAnswer = "<Result>Some content</Result>";
+            bool result1 = XmlDeserializer.ParseQueryAnswer(goodAnswer, out string answerContent1);
+            Assert.True(result1);
+            Assert.Equal(goodAnswer, answerContent1);
+            string errorAnswer = "<Error>Database not found</Error>";
+            bool result2= XmlDeserializer.ParseQueryAnswer(errorAnswer, out string answerContent2);
+            Assert.False(result2);
+            Assert.Equal("Database not found", answerContent2);
+        }
     }
 }
